@@ -108,8 +108,14 @@ def ingest(documents: list[Document], drop_existing: bool = False) -> int:
     if not new_docs:
         return 0
 
+    total = len(new_docs)
     rows = []
-    for doc in new_docs:
+    for i, doc in enumerate(new_docs, 1):
+        print(
+            f"  embedding {i}/{total}  [{doc.source}] {doc.source_id}  chunk {doc.chunk_index}",
+            end="\r",
+            flush=True,
+        )
         vector = embedder.embed_article(doc.title + " " + doc.text)
         rows.append(
             {
@@ -130,6 +136,7 @@ def ingest(documents: list[Document], drop_existing: bool = False) -> int:
                 "vector": vector,
             }
         )
+    print(f"  embedding done: {total} chunks{'': <40}", flush=True)
 
     tbl.add(rows)
-    return len(rows)
+    return total

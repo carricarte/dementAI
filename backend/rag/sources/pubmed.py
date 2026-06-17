@@ -189,38 +189,59 @@ def fetch(queries_file: Path | None = None) -> list[Document]:
     seen_pmids: set[str] = set()
     all_docs: list[Document] = []
 
-    for category, query in all_queries:
-        print(f"  [{category}] {query!r}")
+    n_queries = len(all_queries)
+    for q_idx, (category, query) in enumerate(all_queries, 1):
+        print(f"\n  [{q_idx}/{n_queries}] [{category}] {query!r}", flush=True)
+        print("    searching ...", end=" ", flush=True)
         try:
             pmids = _search(query, max_results, date_range_years)
             time.sleep(_DELAY)
         except Exception as e:
-            print(f"    search error: {e}")
+            print(f"search error: {e}", flush=True)
             continue
 
         new_pmids = [p for p in pmids if p not in seen_pmids]
         if not new_pmids:
-            print("    0 new PMIDs")
+            print(f"0 new PMIDs ({len(pmids)} hits, all seen)", flush=True)
             continue
-        print(f"    {len(new_pmids)} new / {len(pmids)} hits")
+        print(f"{len(new_pmids)} new / {len(pmids)} hits", flush=True)
 
         for i in range(0, len(new_pmids), _BATCH_SIZE):
             batch = new_pmids[i : i + _BATCH_SIZE]
+            batch_num = i // _BATCH_SIZE + 1
+            total_batches = (len(new_pmids) + _BATCH_SIZE - 1) // _BATCH_SIZE
+            print(
+                f"    batch {batch_num}/{total_batches} ({len(batch)} PMIDs) — downloading ...",
+                end=" ",
+                flush=True,
+            )
             try:
                 root = _fetch_xml(batch)
                 time.sleep(_DELAY)
             except Exception as e:
-                print(f"    fetch error (batch {i // _BATCH_SIZE}): {e}")
+                print(f"error: {e}", flush=True)
                 continue
 
-            for article_el in root.findall("PubmedArticle"):
+            articles = root.findall("PubmedArticle")
+            print(f"got {len(articles)} articles — parsing ...", flush=True)
+
+            for art_idx, article_el in enumerate(articles, 1):
                 parsed = _parse_article(article_el)
                 if not parsed or parsed["pmid"] in seen_pmids:
                     continue
                 seen_pmids.add(parsed["pmid"])
 
+                title_short = (
+                    parsed["title"][:70] + "…" if len(parsed["title"]) > 70 else parsed["title"]
+                )
                 full_text = f"{parsed['title']}\n\n{parsed['abstract']}"
-                for chunk_idx, chunk in enumerate(_chunk(full_text)):
+                chunks = _chunk(full_text)
+                print(
+                    f"      [{art_idx}/{len(articles)}] PMID {parsed['pmid']} "
+                    f"→ {len(chunks)} chunk(s)  {title_short}",
+                    flush=True,
+                )
+                for chunk_idx, chunk in enumerate(chunks):
                     all_docs.append(
                         Document(
                             id=make_id("pubmed", parsed["pmid"], chunk),
@@ -239,5 +260,5 @@ def fetch(queries_file: Path | None = None) -> list[Document]:
                         )
                     )
 
-    print(f"  [pubmed] {len(all_docs)} chunks from {len(seen_pmids)} articles")
+    print(f"\n  [pubmed] total: {len(all_docs)} chunks from {len(seen_pmids)} articles", flush=True)
     return all_docs

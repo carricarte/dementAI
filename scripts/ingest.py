@@ -71,7 +71,7 @@ def main() -> None:
     drop_on_first = args.drop  # only drop once, on the first source
 
     for src in sources:
-        print(f"\n[{src}] Fetching ...")
+        print(f"\n[{src}] Fetching ...", flush=True)
         try:
             if src == "awmf":
                 docs = fetch_awmf()
@@ -86,26 +86,26 @@ def main() -> None:
             elif src == "aan":
                 docs = fetch_aan()
             else:
-                print(f"  {src}: no fetcher, skipping")
+                print(f"  {src}: no fetcher, skipping", flush=True)
                 continue
 
             if not docs:
-                print(f"  {src}: 0 documents returned")
+                print(f"  {src}: 0 documents returned", flush=True)
                 continue
 
-            print(f"  Embedding and storing {len(docs)} chunks ...")
+            print(f"  {len(docs)} chunks fetched — embedding ...", flush=True)
             n = ingest(docs, drop_existing=drop_on_first)
             drop_on_first = False  # only drop on the first successful ingest
-            print(f"  {src}: ingested {n} chunks")
+            print(f"  {src}: ingested {n} chunks", flush=True)
             total += n
 
         except NotImplementedError as e:
-            print(f"  {src}: {e}")
+            print(f"  {src}: {e}", flush=True)
         except Exception as e:
-            print(f"  {src}: unexpected error — {e}")
+            print(f"  {src}: unexpected error — {e}", flush=True)
             raise
 
-    print(f"\nDone. Total chunks ingested: {total}")
+    print(f"\nDone. Total chunks ingested: {total}", flush=True)
 
 
 if __name__ == "__main__":
