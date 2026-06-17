@@ -116,7 +116,9 @@ def ingest(documents: list[Document], drop_existing: bool = False) -> int:
             end="\r",
             flush=True,
         )
-        vector = embedder.embed_article(doc.title + " " + doc.text)
+        mesh = " ".join(doc.mesh_terms) if doc.mesh_terms else ""
+        embed_text = f"{doc.title} {doc.text}" + (f" MeSH: {mesh}" if mesh else "")
+        vector = embedder.embed_article(embed_text)
         rows.append(
             {
                 "id": doc.id,

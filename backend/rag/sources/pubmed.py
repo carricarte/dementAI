@@ -234,7 +234,7 @@ def fetch(queries_file: Path | None = None) -> list[Document]:
                 title_short = (
                     parsed["title"][:70] + "…" if len(parsed["title"]) > 70 else parsed["title"]
                 )
-                full_text = f"{parsed['title']}\n\n{parsed['abstract']}"
+                full_text = parsed["abstract"]  # title prepended by ingest(); no duplication
                 chunks = _chunk(full_text)
                 print(
                     f"      [{art_idx}/{len(articles)}] PMID {parsed['pmid']} "
