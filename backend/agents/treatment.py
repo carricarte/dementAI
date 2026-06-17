@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import GraphState
 from backend.tools.calculators import donepezil_dose, memantine_dose
 from backend.tools.retrieval import retrieve
 
-_SYSTEM = """You are a dementia treatment specialist.
-Advise on pharmacological and non-pharmacological therapies, dosing, titration schedules,
-drug interactions, and monitoring. Disease type and patient risk flags are passed as context.
-Follow AWMF 038-013 and current FDA/EMA approvals. Cite every claim."""
+_SYSTEM = load("treatment")
 
 
 def run_treatment(state: GraphState) -> GraphState:

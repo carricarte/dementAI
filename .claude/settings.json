@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(rm *data/lancedb*)",
+      "Bash(rmdir *data/lancedb*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json,sys,subprocess,os; d=json.load(sys.stdin); f=d.get('tool_input',{}).get('file_path',''); not f.endswith('.py') and sys.exit(0); r='.venv/bin/ruff' if os.path.exists('.venv/bin/ruff') else 'ruff'; subprocess.run([r,'format',f],capture_output=True); res=subprocess.run([r,'check','--fix',f],capture_output=True,text=True); res.returncode!=0 and print(json.dumps({'hookSpecificOutput':{'hookEventName':'PostToolUse','additionalContext':'Ruff errors in '+f+':\\n'+res.stdout.strip()}}))\"",
+            "statusMessage": "Running ruff…"
+          }
+        ]
+      }
+    ]
+  }
+}

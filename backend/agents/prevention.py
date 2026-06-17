@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import GraphState
 from backend.tools.retrieval import retrieve
 
-_SYSTEM = """You are a dementia prevention specialist.
-Focus on modifiable risk factors (cardiovascular, metabolic, lifestyle, sensory),
-evidence-based interventions, and personalised preventive strategies.
-Ground all recommendations in published evidence. Cite every factual claim."""
+_SYSTEM = load("prevention")
 
 
 def run_prevention(state: GraphState) -> GraphState:

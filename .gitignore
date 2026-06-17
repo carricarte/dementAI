@@ -23,3 +23,6 @@ frontend/build/
 *.log
 .DS_Store
 .idea/
+
+# Claude Code local settings (personal overrides)
+.claude/settings.local.json

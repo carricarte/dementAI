@@ -4,6 +4,7 @@ from langgraph.graph import END, StateGraph
 
 from backend.audit.logger import audit_logger
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import ClinicalStage, GraphState, PatientRecord, VisitRecord
 from backend.state.store import patient_store
 
@@ -13,19 +14,7 @@ from .prevention import run_prevention
 from .screening import run_screening
 from .treatment import run_treatment
 
-_CLASSIFY_PROMPT = """You are a clinical coordinator for a dementia specialist team.
-Classify the following physician query into exactly one stage.
-
-Stages:
-- screening  : cognitive assessments, score interpretation, initial workup triage
-- diagnosis  : subtype identification, differential diagnosis, biomarker interpretation
-- prevention : risk factor management, lifestyle interventions, preventive strategies
-- treatment  : pharmacological / non-pharmacological therapy, dosing, drug interactions
-- care       : care planning, caregiver support, advance directives, placement
-
-Query: {query}
-
-Reply with only the stage name (one lowercase word)."""
+_CLASSIFY_PROMPT = load("coordinator_classify")
 
 
 def classify_stage(state: GraphState) -> GraphState:

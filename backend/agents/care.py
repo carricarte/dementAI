@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import GraphState
 from backend.tools.retrieval import retrieve
 
-_SYSTEM = """You are a dementia care specialist.
-Advise on care planning, caregiver support, safety assessment, advance directives,
-placement decisions, and quality-of-life interventions. Cite every recommendation."""
+_SYSTEM = load("care")
 
 
 def run_care(state: GraphState) -> GraphState:

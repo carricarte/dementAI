@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import GraphState
 from backend.tools.retrieval import retrieve
 
-_SYSTEM = """You are a dementia screening specialist.
-Interpret cognitive assessment scores, recommend further workup, and flag patients for
-specialist referral. Base every recommendation on AAN guidelines and AWMF 038-013.
-Cite every factual claim with [Source: title]."""
+_SYSTEM = load("screening")
 
 
 def run_screening(state: GraphState) -> GraphState:
@@ -42,6 +40,5 @@ def _format_history(state: GraphState) -> str:
     if not visits:
         return "No prior visits."
     return "\n".join(
-        f"[{v.timestamp.date()} | {v.stage.value}] {v.query[:120]}"
-        for v in visits[-5:]
+        f"[{v.timestamp.date()} | {v.stage.value}] {v.query[:120]}" for v in visits[-5:]
     )

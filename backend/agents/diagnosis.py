@@ -1,15 +1,11 @@
 from __future__ import annotations
 
 from backend.llm import get_llm
+from backend.prompts import load
 from backend.state.schema import GraphState
 from backend.tools.retrieval import retrieve
 
-_SYSTEM = """You are a dementia diagnosis specialist.
-Your role is subtype identification, differential diagnosis, and biomarker interpretation.
-Supported subtypes: Alzheimer's, vascular, Lewy body, FTD (behavioral), PPA (semantic /
-nonfluent), FTD-MND, mixed, PDD, Huntington's, CBD, PSP, posterior cortical atrophy,
-LATE, CTE, CJD, HIV dementia, Wernicke-Korsakoff, NPH, Down syndrome dementia.
-Cite every factual claim with [Source: title]."""
+_SYSTEM = load("diagnosis")
 
 
 def run_diagnosis(state: GraphState) -> GraphState:
