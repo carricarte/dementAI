@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     # Default: neuml/pubmedbert-base-embeddings — public, 768-dim, biomedical retrieval
     # Alternative: ncats/MedCPT-Query-Encoder (requires HF org authentication)
     embed_model: str = "neuml/pubmedbert-base-embeddings"
-    retrieval_top_k: int = 5
+    retrieval_top_k: int = 20
 
 
 settings = Settings()
