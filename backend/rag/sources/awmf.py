@@ -35,7 +35,7 @@ _UA = "DCA-Research-Bot/1.0 (academic dementia research)"
 _DEFAULT_DIR = Path("data/sources/awmf")
 
 # Document types to ingest from the API links list (in preference order)
-_INGEST_TYPES = {"longVersion", "guidelineReport"}
+_INGEST_TYPES = {"longVersion"}
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Pre-commit hook: run e2e structural tests (no LLM/KB required).
+# LLM and KB tests are skipped automatically when ANTHROPIC_API_KEY is unset.
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "Running e2e tests..."
+.venv/bin/pytest tests/test_e2e.py -q --tb=short 2>&1
+echo "All e2e tests passed."

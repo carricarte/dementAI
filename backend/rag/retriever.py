@@ -42,15 +42,19 @@ class _LazyReranker:
     _model_name: str | None = None
 
     def rerank(self, query: str, rows: list, top_k: int, model_name: str) -> list:
-        if self._model is None or self._model_name != model_name:
-            from sentence_transformers import CrossEncoder
+        try:
+            if self._model is None or self._model_name != model_name:
+                from sentence_transformers import CrossEncoder
 
-            self._model = CrossEncoder(model_name, trust_remote_code=True)
-            self._model_name = model_name
-        pairs = [(query, row["text"]) for row in rows]
-        scores = self._model.predict(pairs)
-        ranked = sorted(zip(scores, rows), key=lambda x: x[0], reverse=True)
-        return [row for _, row in ranked[:top_k]]
+                self._model = CrossEncoder(model_name, trust_remote_code=True)
+                self._model_name = model_name
+            pairs = [(query, row["text"]) for row in rows]
+            scores = self._model.predict(pairs)
+            ranked = sorted(zip(scores, rows), key=lambda x: x[0], reverse=True)
+            return [row for _, row in ranked[:top_k]]
+        except Exception:
+            # sentence-transformers not installed or model download failed
+            return rows[:top_k]
 
 
 _reranker = _LazyReranker()
