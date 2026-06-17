@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, field
 
 import lancedb
@@ -8,6 +9,17 @@ import pyarrow as pa
 from backend.config import settings
 from backend.rag.embedder import embedder
 from backend.rag.retriever import TABLE_NAME
+
+
+def make_id(source: str, source_id: str, text: str) -> str:
+    """Stable content-hash ID: same source + document + chunk text → same ID.
+
+    Using source_id (PMID, register number, …) in the hash means two sources
+    that happen to share identical text still get distinct IDs.
+    """
+    digest = hashlib.sha256(f"{source}\x00{source_id}\x00{text}".encode()).hexdigest()
+    return f"{source}_{digest[:20]}"
+
 
 VECTOR_DIM = 768  # PubMedBERT / neuml/pubmedbert-base-embeddings output dim
 
@@ -84,8 +96,20 @@ def ingest(documents: list[Document], drop_existing: bool = False) -> int:
     except Exception:
         tbl = db.create_table(TABLE_NAME, schema=SCHEMA)
 
+    # Skip documents whose IDs are already in the table.
+    try:
+        existing_ids: set[str] = set(
+            tbl.to_lance().to_table(columns=["id"]).column("id").to_pylist()
+        )
+    except Exception:
+        existing_ids = set()
+
+    new_docs = [d for d in documents if d.id not in existing_ids]
+    if not new_docs:
+        return 0
+
     rows = []
-    for doc in documents:
+    for doc in new_docs:
         vector = embedder.embed_article(doc.title + " " + doc.text)
         rows.append(
             {

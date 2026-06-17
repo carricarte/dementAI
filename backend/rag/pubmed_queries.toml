@@ -1,58 +1,215 @@
 # PubMed search queries for the DCA knowledge base.
-# Each string is sent verbatim to the NCBI E-utilities esearch API.
-# Add, remove, or edit lines to control what gets ingested.
-# Run:  python scripts/ingest.py --source pubmed
+# Each string is sent verbatim to NCBI E-utilities esearch (relevance-sorted).
+# Organised by clinical stage; within each stage queries are grouped by topic
+# or dementia type. Add / remove lines freely — one query per line.
+#
+# Run:  python scripts/ingest.py --source pubmed [--drop]
 
 [settings]
-max_results_per_query = 100   # articles per query string (sorted by relevance)
-date_range_years      = 10    # restrict to articles published in the last N years
+max_results_per_query = 100   # articles per query (sorted by relevance)
+date_range_years      = 10    # restrict to last N years
 
 [queries]
 
+# ── Screening ────────────────────────────────────────────────────────────────
 screening = [
-    "cognitive screening tests dementia primary care",
-    "MMSE MoCA sensitivity specificity dementia diagnosis",
-    "mild cognitive impairment screening instruments",
-    "CDR Clinical Dementia Rating scale reliability validity",
+    # General cognitive assessment
+    "MMSE Mini-Mental State Examination sensitivity specificity dementia",
+    "MoCA Montreal Cognitive Assessment validation mild cognitive impairment",
+    "CDR Clinical Dementia Rating scale administration reliability",
+    "ADAS-Cog Alzheimer Assessment Scale clinical trials validity",
+    "brief cognitive screening primary care older adults",
+    "neuropsychological battery dementia differential diagnosis",
+    "subjective cognitive decline preclinical dementia biomarkers",
+    "mild cognitive impairment MCI diagnostic criteria conversion rate",
+    "cognitive screening blood-based biomarkers Alzheimer early detection",
+    "delirium cognitive impairment differential diagnosis assessment",
+    "geriatric depression GDS cognitive testing confounding",
+
+    # Type-specific screening approaches
+    "Alzheimer disease preclinical screening amyloid PET blood biomarkers",
+    "Parkinson disease cognitive screening MCI PDD",
+    "Huntington disease cognitive assessment prodromal",
+    "Down syndrome dementia screening cognitive decline trisomy 21",
+    "HIV neurocognitive disorder screening battery HAND",
 ]
 
+# ── Diagnosis ────────────────────────────────────────────────────────────────
 diagnosis = [
-    "Alzheimer disease diagnosis NIA-AA criteria biomarkers",
-    "Lewy body dementia clinical diagnosis DLB criteria",
-    "frontotemporal dementia diagnosis clinical criteria",
-    "vascular dementia diagnosis neuroimaging criteria",
-    "dementia differential diagnosis CSF biomarkers amyloid tau",
-    "amyloid PET FDG PET tau PET dementia diagnosis",
-    "normal pressure hydrocephalus diagnosis treatment",
-    "rapidly progressive dementia Creutzfeldt-Jakob diagnosis",
+    # Biomarkers and neuroimaging (cross-type)
+    "ATN framework Alzheimer biological staging CSF amyloid tau",
+    "amyloid PET clinical diagnosis Alzheimer mild cognitive impairment",
+    "tau PET imaging tauopathy differential diagnosis dementia",
+    "FDG-PET hypometabolism dementia differential diagnosis",
+    "brain MRI hippocampal atrophy white matter dementia diagnosis",
+    "CSF biomarkers neurofilament light chain dementia differential",
+    "genetic testing APOE PSEN1 APP GRN C9orf72 MAPT dementia",
+    "plasma phospho-tau 217 Alzheimer diagnosis blood test",
+
+    # Alzheimer's disease
+    "Alzheimer disease NIA-AA diagnostic criteria 2024 staging",
+    "early-onset Alzheimer disease diagnosis genetic workup",
+    "posterior cortical atrophy PCA Alzheimer variant diagnosis clinical features",
+
+    # Vascular dementia
+    "vascular dementia NINDS-AIREN criteria neuroimaging diagnosis",
+    "cerebral small vessel disease cognitive impairment diagnosis",
+    "strategic infarct dementia diagnosis clinical features",
+
+    # Lewy body dementia
+    "Lewy body dementia DLB consortium diagnostic criteria fourth report",
+    "REM sleep behavior disorder dementia prodrome Lewy body",
+    "dopamine transporter SPECT DLB diagnosis",
+
+    # Frontotemporal dementia spectrum
+    "behavioral variant frontotemporal dementia bvFTD diagnostic criteria",
+    "semantic variant primary progressive aphasia svPPA diagnosis",
+    "nonfluent agrammatic primary progressive aphasia nfvPPA diagnosis",
+    "FTD motor neuron disease TDP-43 ALS-FTD clinical diagnosis",
+    "frontotemporal dementia GRN MAPT C9orf72 genetic diagnosis",
+
+    # Parkinson spectrum
+    "Parkinson disease dementia PDD diagnosis criteria DLB distinction",
+    "progressive supranuclear palsy PSP Richardson syndrome diagnosis",
+    "corticobasal syndrome CBS corticobasal degeneration diagnosis",
+
+    # Mixed dementia
+    "mixed Alzheimer vascular dementia pathology diagnosis prevalence",
+
+    # Rare and secondary dementias
+    "normal pressure hydrocephalus NPH clinical triad diagnosis tap test",
+    "Creutzfeldt-Jakob disease CJD prion rapidly progressive dementia diagnosis",
+    "Wernicke encephalopathy Korsakoff syndrome diagnosis thiamine deficiency",
+    "HIV-associated neurocognitive disorder HAND diagnosis criteria staging",
+    "Huntington disease dementia cognitive decline genetic diagnosis",
+    "LATE limbic-predominant TDP-43 encephalopathy neuropathology diagnosis",
+    "chronic traumatic encephalopathy CTE neuropathology diagnosis biomarkers",
+    "Down syndrome Alzheimer dementia diagnosis APP trisomy 21",
 ]
 
+# ── Prevention ───────────────────────────────────────────────────────────────
 prevention = [
-    "dementia prevention modifiable risk factors Lancet Commission",
-    "hypertension midlife dementia risk cognitive decline",
-    "physical activity exercise cognitive decline prevention",
-    "hearing loss dementia risk intervention",
-    "social engagement cognitive reserve dementia prevention",
-    "sleep apnea cognitive decline dementia risk",
-    "mild cognitive impairment conversion dementia prevention",
+    # Evidence reviews
+    "dementia prevention modifiable risk factors Lancet Commission 2024",
+    "Alzheimer disease prevention clinical trials lifestyle interventions",
+    "mild cognitive impairment MCI conversion prevention intervention",
+
+    # Vascular risk factors
+    "hypertension treatment midlife cognitive decline dementia prevention",
+    "type 2 diabetes dementia risk insulin resistance prevention",
+    "atrial fibrillation anticoagulation dementia prevention stroke",
+    "hyperlipidaemia statin cognitive decline dementia prevention",
+    "obesity BMI midlife cognitive decline dementia risk",
+
+    # Lifestyle
+    "physical activity aerobic exercise dementia prevention randomized trial",
+    "Mediterranean diet MIND diet cognitive decline prevention",
+    "smoking cessation alcohol reduction dementia prevention",
+    "cognitive reserve education lifelong learning dementia prevention",
+    "social isolation loneliness dementia risk intervention",
+
+    # Sensory and mental health
+    "hearing loss correction hearing aids dementia prevention randomized",
+    "visual impairment correction dementia risk prevention",
+    "depression treatment cognitive decline dementia prevention",
+
+    # Sleep and injury
+    "obstructive sleep apnoea CPAP cognitive decline dementia prevention",
+    "traumatic brain injury CTE dementia prevention risk reduction",
+
+    # Genetic and secondary dementia prevention
+    "vascular dementia secondary prevention antiplatelet anticoagulation",
+    "Wernicke encephalopathy thiamine prophylaxis alcohol use disorder",
+    "HIV dementia antiretroviral therapy cognitive prevention",
 ]
 
+# ── Treatment ─────────────────────────────────────────────────────────────────
 treatment = [
-    "cholinesterase inhibitors donepezil rivastigmine galantamine Alzheimer",
-    "memantine Alzheimer disease moderate severe treatment",
-    "lecanemab donanemab anti-amyloid therapy Alzheimer clinical trial",
-    "behavioral psychological symptoms dementia BPSD pharmacological treatment",
-    "non-pharmacological interventions behavioral symptoms dementia",
-    "Parkinson disease dementia rivastigmine treatment",
-    "Lewy body dementia pharmacological management",
+    # Cholinesterase inhibitors
+    "donepezil Alzheimer disease randomized controlled trial efficacy",
+    "rivastigmine Alzheimer disease Parkinson dementia clinical trial",
+    "galantamine Alzheimer disease efficacy safety meta-analysis",
+    "cholinesterase inhibitors dementia systematic review meta-analysis",
+
+    # Memantine and combination
+    "memantine Alzheimer disease moderate severe treatment randomized",
+    "combination memantine donepezil Alzheimer disease clinical trial",
+
+    # Disease-modifying (anti-amyloid)
+    "lecanemab anti-amyloid antibody Alzheimer phase 3 CLARITY trial",
+    "donanemab TRAILBLAZER-ALZ Alzheimer disease treatment",
+    "ARIA amyloid-related imaging abnormalities anti-amyloid therapy management",
+
+    # Vascular dementia
+    "vascular dementia treatment vascular risk factor management pharmacological",
+
+    # Lewy body dementia
+    "Lewy body dementia rivastigmine cholinesterase treatment",
+    "Lewy body dementia antipsychotic neuroleptic sensitivity contraindication",
+    "REM sleep behavior disorder clonazepam melatonin treatment dementia",
+
+    # FTD spectrum
+    "behavioral variant FTD SSRI sertraline trazodone symptom treatment",
+    "primary progressive aphasia speech language therapy intervention",
+    "FTD-ALS riluzole symptom management palliative",
+
+    # Parkinson and related
+    "Parkinson disease dementia treatment pharmacological management",
+    "progressive supranuclear palsy PSP pharmacological supportive treatment",
+    "corticobasal syndrome pharmacological treatment symptom management",
+
+    # Other types
+    "normal pressure hydrocephalus ventriculoperitoneal shunt outcome",
+    "Huntington disease dementia psychiatric symptom pharmacological treatment",
+    "Wernicke-Korsakoff syndrome thiamine treatment dosing intravenous",
+    "HIV dementia antiretroviral therapy cognitive improvement",
+    "Down syndrome Alzheimer dementia pharmacological treatment",
+
+    # BPSD and symptom management
+    "behavioral psychological symptoms dementia BPSD antipsychotic risk benefit",
+    "agitation dementia non-pharmacological intervention first-line",
+    "depression anxiety dementia pharmacological treatment SSRI",
+    "sleep disturbance insomnia dementia treatment non-pharmacological",
+    "pain assessment management non-verbal dementia",
+    "cognitive stimulation therapy CST dementia randomized trial",
 ]
 
+# ── Care ──────────────────────────────────────────────────────────────────────
 care = [
-    "dementia care planning advance directives",
-    "caregiver burden dementia intervention support",
-    "driving cessation dementia safety",
-    "dementia wandering safety home assessment",
-    "nursing home placement dementia decision",
-    "palliative care end of life dementia",
-    "dementia caregiver education psychoeducation program",
+    # Care planning
+    "dementia care planning family goals of care communication",
+    "advance care planning dementia capacity assessment decision-making",
+    "dementia power of attorney financial legal planning capacity",
+
+    # Caregiver
+    "caregiver burden dementia psychoeducation intervention randomized",
+    "caregiver stress burnout dementia support program",
+    "respite care dementia caregiver effectiveness",
+    "dementia caregiver dyadic intervention family",
+
+    # Safety
+    "driving cessation dementia safety assessment guidelines",
+    "dementia wandering elopement safety home monitoring",
+    "falls prevention dementia older adults intervention",
+    "medication management safety dementia self-administration",
+
+    # Functional and daily care
+    "activities of daily living ADL dementia care assistance",
+    "nutritional management dysphagia dementia weight loss",
+    "pain assessment non-verbal dementia care",
+
+    # Placement and setting
+    "memory care unit nursing home placement dementia criteria",
+    "home care community-based dementia program outcomes",
+    "young-onset early-onset dementia care support needs",
+
+    # End of life
+    "palliative care hospice dementia end of life outcomes",
+    "dementia end of life feeding tube artificial nutrition",
+    "comfort care symptom management advanced dementia",
+
+    # Special populations
+    "Down syndrome dementia aging care intellectual disability",
+    "HIV dementia care management aging",
+    "dementia care quality of life outcome measurement",
 ]

@@ -10,6 +10,7 @@ frontend JavaScript — they are intentionally public (client-side) credentials.
 Requires optional [ingest] + [rag] dependencies:
     pip install -e ".[ingest,rag]"
 """
+
 from __future__ import annotations
 
 import re
@@ -18,7 +19,7 @@ from pathlib import Path
 
 import httpx
 
-from backend.rag.ingestion import Document
+from backend.rag.ingestion import Document, make_id
 
 # Register number → canonical title
 AWMF_TARGETS: dict[str, str] = {
@@ -35,13 +36,14 @@ _DEFAULT_DIR = Path("data/sources/awmf")
 # Document types to ingest from the API links list (in preference order)
 _INGEST_TYPES = {"longVersion", "guidelineReport"}
 
-CHUNK_SIZE = 1000    # characters; within MedCPT's 512-token limit
+CHUNK_SIZE = 1000  # characters; within MedCPT's 512-token limit
 CHUNK_OVERLAP = 150  # overlap between consecutive chunks
 
 
 # ---------------------------------------------------------------------------
 # API helpers
 # ---------------------------------------------------------------------------
+
 
 def _api_headers() -> dict:
     return {"User-Agent": _UA, "Api-Key": _API_KEY, "Accept": "application/json"}
@@ -79,6 +81,7 @@ def _select_pdfs(meta: dict, ingest_types: set[str]) -> list[dict]:
 # Download helpers
 # ---------------------------------------------------------------------------
 
+
 def _download_pdf(url: str, dest: Path) -> Path:
     if dest.exists():
         print(f"    [cached]   {dest.name}")
@@ -96,6 +99,7 @@ def _download_pdf(url: str, dest: Path) -> Path:
 # ---------------------------------------------------------------------------
 # PDF parsing and chunking
 # ---------------------------------------------------------------------------
+
 
 def _extract_pages(pdf_path: Path) -> list[tuple[int, str]]:
     """Return (page_number, text) for each content-bearing page."""
@@ -148,6 +152,7 @@ def _year_from_filename(name: str) -> int:
 # Public entry point
 # ---------------------------------------------------------------------------
 
+
 def fetch(sources_dir: Path | None = None) -> list[Document]:
     """Download AWMF guidelines via the REST API and return chunked Documents."""
     root = sources_dir or _DEFAULT_DIR
@@ -175,9 +180,9 @@ def fetch(sources_dir: Path | None = None) -> list[Document]:
         # 2. Select PDFs to ingest
         pdf_links = _select_pdfs(meta, _INGEST_TYPES)
         if not pdf_links:
-            print(f"  [warn] No active PDFs found via API")
+            print("  [warn] No active PDFs found via API")
             continue
-        print(f"  PDFs to ingest: {[l['filename'] for l in pdf_links]}")
+        print(f"  PDFs to ingest: {[lnk['filename'] for lnk in pdf_links]}")
 
         # 3. Download and process each PDF
         for link in pdf_links:
@@ -200,16 +205,18 @@ def fetch(sources_dir: Path | None = None) -> list[Document]:
             print(f"  → {len(chunks)} chunks across {len(pages)} pages")
 
             for page_num, chunk_idx, text in chunks:
-                all_docs.append(Document(
-                    id=f"awmf_{register_num.replace('-', '')}_{link['type']}_{chunk_idx:05d}",
-                    source="awmf",
-                    source_id=register_num,
-                    title=f"{title} ({link['type']})",
-                    text=text,
-                    url=link["url"],
-                    year=year,
-                    page=page_num,
-                    chunk_index=chunk_idx,
-                ))
+                all_docs.append(
+                    Document(
+                        id=make_id("awmf", register_num, text),
+                        source="awmf",
+                        source_id=register_num,
+                        title=f"{title} ({link['type']})",
+                        text=text,
+                        url=link["url"],
+                        year=year,
+                        page=page_num,
+                        chunk_index=chunk_idx,
+                    )
+                )
 
     return all_docs

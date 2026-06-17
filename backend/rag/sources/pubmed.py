@@ -19,7 +19,7 @@ from pathlib import Path
 
 import httpx
 
-from backend.rag.ingestion import Document
+from backend.rag.ingestion import Document, make_id
 
 _BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/"
 # NCBI requires a contact email in the User-Agent for automated scripts.
@@ -223,7 +223,7 @@ def fetch(queries_file: Path | None = None) -> list[Document]:
                 for chunk_idx, chunk in enumerate(_chunk(full_text)):
                     all_docs.append(
                         Document(
-                            id=f"pubmed_{parsed['pmid']}_{chunk_idx:03d}",
+                            id=make_id("pubmed", parsed["pmid"], chunk),
                             source="pubmed",
                             source_id=parsed["pmid"],
                             title=parsed["title"],
