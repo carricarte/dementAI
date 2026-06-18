@@ -222,6 +222,21 @@ def test_full_pipeline_screening_recommends_workup(client, patient_id):
     )
 
 
+@requires_kb
+def test_alz_source_returns_citations():
+    """retrieve() with source_filter=["alz"] returns ≥1 citation after ingestion."""
+    from backend.rag.retriever import KnowledgeRetriever
+
+    ret = KnowledgeRetriever()
+    _, citations = ret.retrieve(
+        "cognitive impairment detection primary care",
+        source_filter=["alz"],
+        top_k=5,
+    )
+    assert len(citations) >= 1
+    assert all(c.source == "alz" for c in citations)
+
+
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 
