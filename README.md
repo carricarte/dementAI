@@ -1,6 +1,6 @@
 # DementIA — AI-powered dementia clinical decision support
 
-A multi-agent clinical decision support system for dementia care. A coordinator classifies each query by clinical stage, then routes it to one of two paths based on what the user provides: if a patient ID is given it takes the patient-specific path (Analyzer Agent → synthesis); otherwise it takes the general path (knowledge base + specialist).
+A multi-agent clinical decision support system for dementia care. A coordinator classifies the query by clinical stage and routes it to the appropriate specialist agent. When patient data is provided, an analyzer agent first produces a structured clinical summary that the specialist uses as context.
 
 ## Architecture
 
@@ -8,8 +8,8 @@ A multi-agent clinical decision support system for dementia care. A coordinator 
 user query
         │
         ▼
-  coordinator                routes to: screening / diagnosis /
-  (classifies stage)                    prevention / treatment / care
+  coordinator
+  (classifies stage)
         │
         ▼
   patient data provided?
@@ -17,16 +17,17 @@ user query
     no  │  yes
         │          ▼
         │    analyzer agent
+        │    reads patient record
         │    → clinical summary
         │          │
         ▼          ▼
   specialist agent (by stage)
   retrieve clinical evidence
-  generate response
+  generate grounded response
         │
         ▼
   response + references
-  (patient-specific if patient data provided)
+  (patient-specific when patient data provided)
 ```
 
 **SSE stream events:**
@@ -51,15 +52,15 @@ user query
 ## Agents
 
 ### Coordinator
-Classifies the query by `ClinicalStage`, then branches on whether the user provided a patient ID:
-- **General path** (no patient ID) — delegates to the stage specialist, retrieves from the knowledge base, streams the response.
-- **Patient-specific path** (patient ID provided) — invokes the Analyzer Agent first, then synthesizes a personalized response grounded in KB evidence.
+Classifies the query by clinical stage, then routes based on what the user provides:
+- **No patient data** — routes directly to the stage specialist.
+- **Patient data provided** — invokes the Analyzer Agent first, then passes its clinical summary to the stage specialist.
 
-### Analyzer Agent (`backend/agents/analyzer.py`)
-Invoked only on the `patient_specific` path. Reads structured patient data (clinical record from `PatientStore` + NACC UDS / MRI / genetics CSVs) and produces a `PatientStatusReport` with diagnosis stage, cognitive scores, risk factors, medications, MRI findings, and ranked treatment priorities. Patient data never enters the knowledge base.
+### Analyzer Agent
+Reads the patient record (clinical history + research data) and produces a structured clinical summary — diagnosis stage, cognitive scores, risk factors, medications, MRI findings, and ranked treatment priorities. Its output is passed to the specialist as context; patient data never enters the knowledge base.
 
 ### Specialist Agents
-Each specialist retrieves from a stage-specific subset of the knowledge base and builds a grounded response.
+Always generate the final response. Retrieve clinical evidence from a stage-specific subset of the knowledge base and build a grounded answer — using the analyzer's clinical summary as additional context when patient data was provided.
 
 | Stage | Specialist | Source filters |
 |---|---|---|
