@@ -52,7 +52,7 @@ def fetch_aan() -> list[Document]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Populate the DCA LanceDB knowledge base")
+    parser = argparse.ArgumentParser(description="Populate the DementIA LanceDB knowledge base")
     parser.add_argument("--source", choices=SOURCES, help="Single source to ingest")
     parser.add_argument("--all", action="store_true", help="Ingest all sources")
     parser.add_argument(

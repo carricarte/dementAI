@@ -1,4 +1,4 @@
-# PubMed search queries for the DCA knowledge base.
+# PubMed search queries for the DementIA knowledge base.
 # Each string is sent verbatim to NCBI E-utilities esearch (relevance-sorted).
 # Organised by clinical stage; within each stage queries are grouped by topic
 # or dementia type. Add / remove lines freely — one query per line.
