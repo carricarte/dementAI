@@ -19,7 +19,7 @@ def test_fetch_returns_documents():
     """fetch() produces non-empty list of Documents from cached PDFs."""
     from backend.rag.sources.alz import fetch
 
-    docs = fetch(sources_dir=_CACHE_DIR.parent)
+    docs = fetch(sources_dir=_CACHE_DIR)
 
     assert len(docs) > 0
     assert all(isinstance(d, Document) for d in docs)
@@ -30,7 +30,7 @@ def test_fetch_document_source():
     """All documents have source='alz'."""
     from backend.rag.sources.alz import fetch
 
-    docs = fetch(sources_dir=_CACHE_DIR.parent)
+    docs = fetch(sources_dir=_CACHE_DIR)
 
     assert all(d.source == "alz" for d in docs)
 
@@ -40,7 +40,7 @@ def test_fetch_both_pdfs_represented():
     """Both configured PDFs produce at least one chunk each."""
     from backend.rag.sources.alz import fetch
 
-    docs = fetch(sources_dir=_CACHE_DIR.parent)
+    docs = fetch(sources_dir=_CACHE_DIR)
     source_ids = {d.source_id for d in docs}
 
     assert "jalz-1528" in source_ids
@@ -52,7 +52,7 @@ def test_fetch_document_fields_populated():
     """Every document has id, text, title, url, year, page, and chunk_index set."""
     from backend.rag.sources.alz import fetch
 
-    docs = fetch(sources_dir=_CACHE_DIR.parent)
+    docs = fetch(sources_dir=_CACHE_DIR)
 
     for doc in docs:
         assert doc.id
@@ -69,7 +69,7 @@ def test_fetch_document_ids_unique():
     """No two documents share the same id (dedup key)."""
     from backend.rag.sources.alz import fetch
 
-    docs = fetch(sources_dir=_CACHE_DIR.parent)
+    docs = fetch(sources_dir=_CACHE_DIR)
     ids = [d.id for d in docs]
 
     assert len(ids) == len(set(ids))
