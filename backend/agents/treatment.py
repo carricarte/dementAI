@@ -80,11 +80,11 @@ Pending workups: {record.pending_workups or "none"}"""
 {f"Standard dosing reference:{chr(10)}{dose_context}" if dose_context else ""}
 
 Retrieved evidence:
-{ctx["text"] or "(knowledge base not yet populated)"}
+{ctx["text"] or "No relevant sources found in the knowledge base."}
 
 Physician query: {state["query"]}
 
-Provide specific treatment recommendations with dosing where applicable."""
+Answer the physician's query above. Only include what directly addresses what was asked."""
 
     return prompt, ctx["citations"]
 

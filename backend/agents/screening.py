@@ -58,11 +58,11 @@ Pending workups: {record.pending_workups or "none"}"""
 {patient_section}
 
 Retrieved evidence:
-{ctx["text"] or "(knowledge base not yet populated)"}
+{ctx["text"] or "No relevant sources found in the knowledge base."}
 
 Physician query: {state["query"]}
 
-Provide a structured clinical assessment with recommendations."""
+Answer the physician's query above. Only include what directly addresses what was asked."""
 
     return prompt, ctx["citations"]
 
