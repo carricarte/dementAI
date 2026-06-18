@@ -1,6 +1,6 @@
 # DementIA — AI-powered dementia clinical decision support
 
-A multi-agent clinical decision support system for dementia care. A coordinator classifies each query by clinical stage and intent, then routes it down one of two paths: a general evidence path (knowledge base + specialist agent) or a patient-specific path (Analyzer Agent → synthesis).
+A multi-agent clinical decision support system for dementia care. A coordinator classifies each query by clinical stage, then routes it to one of two paths based on what the user provides: if a patient ID is given it takes the patient-specific path (Analyzer Agent → synthesis); otherwise it takes the general path (knowledge base + specialist).
 
 ## Architecture
 
@@ -10,40 +10,35 @@ POST /query  or  POST /query/stream
         ▼
   classify_stage          LLM → ClinicalStage (screening / diagnosis /
         │                        prevention / treatment / care)
-        ▼
-  classify_intent         LLM → "general" or "patient_specific"
-        │                 (always "general" when no patient_id supplied)
         │
+        │  patient_id provided?
    ┌────┴────────────────────────────────────┐
-   │ general                  patient_specific│
+   │ no  (general)            yes (patient-specific)
    ▼                                         ▼
-load_patient               Analyzer Agent
-   │                       reads PatientStore + NACC UDS CSVs
-   │                       → PatientStatusReport (structured JSON)
-   ▼                                         │
-specialist (by stage)                        ▼
-  ┌──────────┬─────────────┬──────┬──────┐  synthesize_patient_specific
-  │Screening │  Diagnosis  │Prev. │Treat.│  merges PatientStatusReport
-  │          │             │      │      │  + KB evidence → personalized
-  └──────────┴──────┬──────┴──────┴──────┘  response with citations
-                    │                                │
-                    └──────────────┬─────────────────┘
-                                   ▼
-                            merge_output
-                                   │
-                             save_state       append VisitRecord to
-                                   │          PatientRecord JSON
-                              audit_log       append-only JSONL
-                                   │
-                                  END
+specialist (by stage)      Analyzer Agent
+  ┌──────┬───────┬──────┬──────┬──────┐     reads PatientStore + NACC UDS CSVs
+  │Screen│ Diag. │Prev. │Treat.│ Care │     → PatientStatusReport (structured JSON)
+  └──────┴───────┴──────┴──────┴──────┘              │
+  retrieve KB, stream response                        ▼
+            │                          synthesize_patient_specific
+            │                          KB evidence + PatientStatusReport
+            │                          stream personalized response
+            └──────────────┬───────────────────────────┘
+                           ▼
+                     merge_output
+                           │
+                     save_state         append VisitRecord to PatientRecord JSON
+                           │             (no-op when no patient_id)
+                      audit_log         append-only JSONL
+                           │
+                          END
 ```
 
-**Two paths, one SSE stream:**
+**SSE stream events:**
 
 | Event | Field |
 |---|---|
 | `{"type":"stage","stage":"..."}` | classified clinical stage |
-| `{"type":"intent","intent":"..."}` | `"general"` or `"patient_specific"` |
 | `{"type":"chunk","text":"..."}` | streaming response token |
 | `{"type":"done","citations":[...],"personalized":bool}` | final metadata |
 
@@ -61,9 +56,9 @@ specialist (by stage)                        ▼
 ## Agents
 
 ### Coordinator
-Classifies the query by `ClinicalStage` and `query_intent`, then branches:
-- **General path** — loads the patient record, delegates to the stage specialist, streams the KB-grounded response.
-- **Patient-specific path** — invokes the Analyzer Agent first, then synthesizes a personalized response against KB evidence.
+Classifies the query by `ClinicalStage`, then branches on whether the user provided a patient ID:
+- **General path** (no patient ID) — delegates to the stage specialist, retrieves from the knowledge base, streams the response.
+- **Patient-specific path** (patient ID provided) — invokes the Analyzer Agent first, then synthesizes a personalized response grounded in KB evidence.
 
 ### Analyzer Agent (`backend/agents/analyzer.py`)
 Invoked only on the `patient_specific` path. Reads structured patient data (clinical record from `PatientStore` + NACC UDS / MRI / genetics CSVs) and produces a `PatientStatusReport` with diagnosis stage, cognitive scores, risk factors, medications, MRI findings, and ranked treatment priorities. Patient data never enters the knowledge base.
