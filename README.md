@@ -5,33 +5,29 @@ A multi-agent clinical decision support system for dementia care. A coordinator 
 ## Architecture
 
 ```
-POST /query  or  POST /query/stream
+user query
         │
         ▼
-  classify_stage     LLM → screening / diagnosis / prevention / treatment / care
+  classify stage     screening / diagnosis / prevention / treatment / care
         │
         ▼
-  patient_id provided?
+  patient data provided?
         │
     no  │  yes
-        ├──────────────────────────────────────────┐
-        │                                          │
-        ▼                                          ▼
-  specialist (by stage)                    Analyzer Agent
-  ┌────────┬──────────┬──────────┬──────┐  reads PatientStore + NACC UDS CSVs
-  │Screening│Diagnosis│Prevention│ ...  │  → PatientStatusReport
-  └────────┴──────────┴──────────┴──────┘          │
-  retrieve KB                                       ▼
-  stream response                     synthesize: KB evidence
-        │                             + PatientStatusReport
-        │                             stream personalized response
-        └──────────────────┬──────────────────────┘
+        ├─────────────────────────────────────────┐
+        │                                         │
+        ▼                                         ▼
+  specialist (by stage)                   analyze patient data
+  retrieve clinical evidence              → structured clinical summary
+  generate response                                │
+        │                                         ▼
+        │                               retrieve clinical evidence
+        │                               synthesize personalized response
+        └──────────────────┬─────────────────────┘
                            │
-                     merge_output
+                     update patient record
                            │
-                     save_state      append VisitRecord to PatientRecord JSON
-                           │
-                      audit_log      append-only JSONL
+                       audit log
                            │
                           END
 ```
