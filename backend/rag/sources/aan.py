@@ -50,6 +50,27 @@ AAN_FILES: list[dict] = [
         "title": "Dementia Performance Measurement Set",
         "year": 2013,
     },
+    {
+        "url": "https://www.aan.com/siteassets/home-page/policy-and-guidelines/quality/quality-measures/2018-dementia-management-measures.pdf",
+        "filename": "aan-dementia-management-measures-2018.pdf",
+        "source_id": "aan-dementia-mgmt-2018",
+        "title": "Dementia Management Quality Measurement Set (2018 Update)",
+        "year": 2018,
+    },
+    {
+        "url": "https://www.aan.com/siteassets/home-page/policy-and-guidelines/quality/quality-measures/movement-disorders/2020-parkinson-disease-measurement-set-final.pdf",
+        "filename": "aan-parkinson-quality-measures-2020.pdf",
+        "source_id": "aan-parkinson-2020",
+        "title": "Parkinson's Disease Quality Measurement Set",
+        "year": 2020,
+    },
+    {
+        "url": "https://www.aan.com/siteassets/home-page/policy-and-guidelines/quality/quality-measures/neuromuscular/23-als-measure-update-final.pdf",
+        "filename": "aan-als-quality-measures-2023.pdf",
+        "source_id": "aan-als-2023",
+        "title": "Amyotrophic Lateral Sclerosis (ALS) Quality Measures",
+        "year": 2023,
+    },
 ]
 # Excluded (public comment draft, not formally published):
 # "Etiologic Diagnosis of Dementia" (2018) — aan.com/.../18dementiadiagnosisprotocolforpubcom_pg.pdf

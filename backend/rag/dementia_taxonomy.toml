@@ -1,0 +1,276 @@
+# Dementia disease taxonomy — shared relevance filter for all knowledge sources.
+#
+# Used during ingestion to determine whether a document is in scope.
+# Each section defines one dementia type with its relevant clinical stages
+# and search terms (aliases, subtypes, biomarkers, key interventions).
+#
+# A document is in scope if it matches at least one entry's terms
+# AND at least one of its listed stages.
+
+# ── Alzheimer's disease ───────────────────────────────────────────────────────
+
+[alzheimers]
+name   = "Alzheimer's disease"
+stages = ["screening", "diagnosis", "prevention", "treatment", "care"]
+terms  = [
+    "Alzheimer", "Alzheimer disease", "Alzheimer's disease",
+    "AD", "amyloid", "tau", "ATN framework",
+    "early-onset Alzheimer", "late-onset Alzheimer",
+    "posterior cortical atrophy", "PCA",
+    "APOE", "PSEN1", "PSEN2", "APP",
+    "lecanemab", "donanemab", "aducanumab",
+    "ARIA", "anti-amyloid",
+    "donepezil", "galantamine", "memantine",
+]
+
+# ── Vascular dementia ─────────────────────────────────────────────────────────
+
+[vascular]
+name   = "Vascular dementia"
+stages = ["screening", "diagnosis", "prevention", "treatment", "care"]
+terms  = [
+    "vascular dementia", "vascular cognitive impairment", "VCI",
+    "cerebrovascular disease", "cerebral small vessel disease",
+    "white matter hyperintensities", "lacunar infarct",
+    "strategic infarct dementia", "NINDS-AIREN",
+    "CADASIL", "CARASIL",
+]
+
+# ── Lewy body dementia ────────────────────────────────────────────────────────
+
+[lewy_body]
+name   = "Lewy body dementia"
+stages = ["screening", "diagnosis", "treatment", "care"]
+terms  = [
+    "Lewy body dementia", "Lewy body disease", "DLB",
+    "dementia with Lewy bodies",
+    "REM sleep behavior disorder", "RBD",
+    "dopamine transporter", "DAT-SPECT", "DaTscan",
+    "neuroleptic sensitivity", "fluctuating cognition",
+    "visual hallucinations", "Lewy body",
+]
+
+# ── Frontotemporal dementia — behavioral variant ──────────────────────────────
+
+[ftd_behavioral]
+name   = "Behavioral variant FTD"
+stages = ["screening", "diagnosis", "treatment", "care"]
+terms  = [
+    "behavioral variant frontotemporal dementia", "bvFTD",
+    "frontotemporal dementia", "FTD",
+    "frontotemporal lobar degeneration", "FTLD",
+    "disinhibition", "apathy", "executive dysfunction",
+    "GRN", "MAPT", "C9orf72", "TDP-43",
+    "SSRI frontotemporal", "trazodone FTD",
+]
+
+# ── Primary progressive aphasia ───────────────────────────────────────────────
+
+[ppa_semantic]
+name   = "Semantic variant PPA"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "semantic variant primary progressive aphasia", "svPPA",
+    "semantic dementia", "temporal variant FTD",
+    "word-finding difficulty", "anomia semantic",
+]
+
+[ppa_nonfluent]
+name   = "Nonfluent/agrammatic variant PPA"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "nonfluent agrammatic primary progressive aphasia", "nfvPPA",
+    "progressive nonfluent aphasia", "PNFA",
+    "agrammatism", "apraxia of speech progressive",
+    "speech language therapy progressive aphasia",
+]
+
+# ── FTD with motor neuron disease ─────────────────────────────────────────────
+
+[ftd_mnd]
+name   = "FTD-MND / ALS-FTD"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "FTD-ALS", "ALS-FTD", "FTD-MND",
+    "frontotemporal dementia motor neuron disease",
+    "amyotrophic lateral sclerosis dementia",
+    "TDP-43 ALS frontotemporal",
+    "C9orf72 ALS FTD",
+    "riluzole FTD", "motoneuron",
+]
+
+# ── Mixed dementia ────────────────────────────────────────────────────────────
+
+[mixed]
+name   = "Mixed dementia"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "mixed dementia", "mixed Alzheimer vascular",
+    "mixed pathology dementia",
+    "concurrent Alzheimer cerebrovascular",
+]
+
+# ── Parkinson's disease dementia ──────────────────────────────────────────────
+
+[parkinsons_dementia]
+name   = "Parkinson's disease dementia"
+stages = ["screening", "diagnosis", "treatment", "care"]
+terms  = [
+    "Parkinson disease dementia", "PDD",
+    "Parkinson dementia", "Parkinson cognitive",
+    "Parkinson disease", "Parkinson's disease",
+    "rivastigmine Parkinson", "cholinesterase Parkinson",
+    "UPDRS", "levodopa dementia",
+    "deep brain stimulation cognition",
+]
+
+# ── Huntington's disease ──────────────────────────────────────────────────────
+
+[huntingtons]
+name   = "Huntington's disease"
+stages = ["screening", "diagnosis", "prevention", "treatment", "care"]
+terms  = [
+    "Huntington disease", "Huntington's disease", "HD",
+    "Chorea", "Morbus Huntington",
+    "HTT gene", "CAG repeat",
+    "prodromal Huntington", "premanifest Huntington",
+    "tetrabenazine", "deutetrabenazine",
+]
+
+# ── Corticobasal degeneration ─────────────────────────────────────────────────
+
+[corticobasal]
+name   = "Corticobasal degeneration"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "corticobasal degeneration", "CBD",
+    "corticobasal syndrome", "CBS",
+    "alien limb", "apraxia cortical",
+    "4-repeat tauopathy corticobasal",
+]
+
+# ── Progressive supranuclear palsy ────────────────────────────────────────────
+
+[psp]
+name   = "Progressive supranuclear palsy"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "progressive supranuclear palsy", "PSP",
+    "Richardson syndrome", "PSP-RS",
+    "vertical gaze palsy", "falls backward PSP",
+    "4-repeat tauopathy PSP",
+]
+
+# ── Posterior cortical atrophy ────────────────────────────────────────────────
+
+[posterior_cortical]
+name   = "Posterior cortical atrophy"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "posterior cortical atrophy", "PCA",
+    "Benson's syndrome",
+    "visuospatial dementia", "parieto-occipital atrophy",
+]
+
+# ── LATE (TDP-43 encephalopathy) ──────────────────────────────────────────────
+
+[late]
+name   = "LATE (limbic-predominant TDP-43 encephalopathy)"
+stages = ["diagnosis"]
+terms  = [
+    "LATE", "limbic-predominant TDP-43 encephalopathy",
+    "limbic-predominant age-related TDP-43",
+    "TDP-43 limbic", "hippocampal sclerosis aging",
+]
+
+# ── Chronic traumatic encephalopathy ─────────────────────────────────────────
+
+[cte]
+name   = "Chronic traumatic encephalopathy"
+stages = ["screening", "diagnosis", "prevention"]
+terms  = [
+    "chronic traumatic encephalopathy", "CTE",
+    "traumatic brain injury dementia", "TBI dementia",
+    "repeated head trauma", "concussion dementia",
+    "contact sport neurodegeneration",
+]
+
+# ── Creutzfeldt-Jakob disease ─────────────────────────────────────────────────
+
+[cjd]
+name   = "Creutzfeldt-Jakob disease"
+stages = ["diagnosis", "treatment", "care"]
+terms  = [
+    "Creutzfeldt-Jakob disease", "CJD",
+    "prion disease", "prion dementia",
+    "rapidly progressive dementia",
+    "variant CJD", "vCJD",
+    "sporadic CJD", "familial CJD",
+    "14-3-3 protein CSF prion",
+    "real-time quaking-induced conversion", "RT-QuIC",
+]
+
+# ── HIV-associated neurocognitive disorder ───────────────────────────────────
+
+[hiv_dementia]
+name   = "HIV-associated neurocognitive disorder"
+stages = ["screening", "diagnosis", "prevention", "treatment", "care"]
+terms  = [
+    "HIV-associated neurocognitive disorder", "HAND",
+    "HIV dementia", "HIV encephalopathy",
+    "AIDS dementia complex", "ADC",
+    "antiretroviral therapy cognition",
+    "HIV-1 neurological", "HIV cognitive",
+    "HIV-1-assoziiert", "HIV neurologisch",
+]
+
+# ── Wernicke-Korsakoff syndrome ───────────────────────────────────────────────
+
+[wernicke_korsakoff]
+name   = "Wernicke-Korsakoff syndrome"
+stages = ["screening", "diagnosis", "prevention", "treatment"]
+terms  = [
+    "Wernicke encephalopathy", "Korsakoff syndrome",
+    "Wernicke-Korsakoff", "thiamine deficiency",
+    "alcohol-related dementia", "alcohol use disorder dementia",
+    "thiamine prophylaxis", "thiamine treatment",
+]
+
+# ── Normal pressure hydrocephalus ─────────────────────────────────────────────
+
+[nph]
+name   = "Normal pressure hydrocephalus"
+stages = ["diagnosis", "treatment"]
+terms  = [
+    "normal pressure hydrocephalus", "NPH",
+    "Normaldruckhydrozephalus",
+    "communicating hydrocephalus adult",
+    "gait ataxia dementia incontinence triad",
+    "tap test lumbar puncture NPH",
+    "ventriculoperitoneal shunt dementia",
+]
+
+# ── Down syndrome dementia ────────────────────────────────────────────────────
+
+[down_syndrome]
+name   = "Down syndrome dementia"
+stages = ["screening", "diagnosis", "prevention", "treatment", "care"]
+terms  = [
+    "Down syndrome dementia", "trisomy 21 dementia",
+    "Down syndrome Alzheimer", "intellectual disability dementia",
+    "APP trisomy 21", "Down syndrome aging",
+]
+
+# ── Mild cognitive impairment ─────────────────────────────────────────────────
+
+[mci]
+name   = "Mild cognitive impairment"
+stages = ["screening", "diagnosis", "prevention"]
+terms  = [
+    "mild cognitive impairment", "MCI",
+    "subjective cognitive decline", "SCD",
+    "amnestic MCI", "non-amnestic MCI",
+    "MCI conversion", "MCI progression",
+    "cognitive reserve", "preclinical dementia",
+    "MMSE", "MoCA", "CDR",
+]

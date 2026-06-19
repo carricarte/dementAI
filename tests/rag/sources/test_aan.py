@@ -43,6 +43,9 @@ def test_fetch_all_files_represented():
     assert "aan-mci-measures-2019" in source_ids
     assert "aan-dementia-mgmt-2015" in source_ids
     assert "aan-dementia-perf-2013" in source_ids
+    assert "aan-dementia-mgmt-2018" in source_ids
+    assert "aan-parkinson-2020" in source_ids
+    assert "aan-als-2023" in source_ids
 
 
 @requires_cache
