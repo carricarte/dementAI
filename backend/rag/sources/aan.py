@@ -37,20 +37,6 @@ AAN_FILES: list[dict] = [
         "year": 2019,
     },
     {
-        "url": "https://www.aan.com/siteassets/home-page/policy-and-guidelines/quality/quality-measures/15dmmeasureset_pg.pdf",
-        "filename": "aan-dementia-management-quality-set-2015.pdf",
-        "source_id": "aan-dementia-mgmt-2015",
-        "title": "Dementia Management Quality Measurement Set",
-        "year": 2015,
-    },
-    {
-        "url": "https://www.aan.com/globals/axon/assets/9493.pdf",
-        "filename": "aan-dementia-performance-measures-2013.pdf",
-        "source_id": "aan-dementia-perf-2013",
-        "title": "Dementia Performance Measurement Set",
-        "year": 2013,
-    },
-    {
         "url": "https://www.aan.com/siteassets/home-page/policy-and-guidelines/quality/quality-measures/2018-dementia-management-measures.pdf",
         "filename": "aan-dementia-management-measures-2018.pdf",
         "source_id": "aan-dementia-mgmt-2018",

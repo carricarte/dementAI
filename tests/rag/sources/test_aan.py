@@ -41,11 +41,12 @@ def test_fetch_all_files_represented():
     source_ids = {d.source_id for d in docs}
 
     assert "aan-mci-measures-2019" in source_ids
-    assert "aan-dementia-mgmt-2015" in source_ids
-    assert "aan-dementia-perf-2013" in source_ids
     assert "aan-dementia-mgmt-2018" in source_ids
     assert "aan-parkinson-2020" in source_ids
     assert "aan-als-2023" in source_ids
+    # older versions removed — superseded by 2018 update
+    assert "aan-dementia-mgmt-2015" not in source_ids
+    assert "aan-dementia-perf-2013" not in source_ids
 
 
 @requires_cache
