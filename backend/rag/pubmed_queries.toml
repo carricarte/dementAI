@@ -30,8 +30,13 @@ screening = [
     "Alzheimer disease preclinical screening amyloid PET blood biomarkers",
     "Parkinson disease cognitive screening MCI PDD",
     "Huntington disease cognitive assessment prodromal",
+    "Huntington disease prodromal cognitive screening CAG repeat threshold",
     "Down syndrome dementia screening cognitive decline trisomy 21",
+    "Down syndrome dementia screening cognitive decline trisomy 21 adults",
     "HIV neurocognitive disorder screening battery HAND",
+    "Lewy body dementia screening prodromal REM sleep behavior disorder cognitive",
+    "frontotemporal dementia early detection screening behavioral symptoms primary care",
+    "vascular cognitive impairment screening white matter burden assessment",
 ]
 
 # ── Diagnosis ────────────────────────────────────────────────────────────────
@@ -121,6 +126,8 @@ prevention = [
     "vascular dementia secondary prevention antiplatelet anticoagulation",
     "Wernicke encephalopathy thiamine prophylaxis alcohol use disorder",
     "HIV dementia antiretroviral therapy cognitive prevention",
+    "Huntington disease disease modification prevention gene silencing antisense oligonucleotide",
+    "Down syndrome Alzheimer prevention amyloid intervention trisomy 21 trial",
 ]
 
 # ── Treatment ─────────────────────────────────────────────────────────────────
@@ -164,6 +171,9 @@ treatment = [
     "Wernicke-Korsakoff syndrome thiamine treatment dosing intravenous",
     "HIV dementia antiretroviral therapy cognitive improvement",
     "Down syndrome Alzheimer dementia pharmacological treatment",
+    "Creutzfeldt-Jakob disease treatment supportive management prion",
+    "posterior cortical atrophy treatment cholinesterase occupational therapy",
+    "mixed Alzheimer vascular dementia treatment pharmacological management",
 
     # BPSD and symptom management
     "behavioral psychological symptoms dementia BPSD antipsychotic risk benefit",
@@ -212,4 +222,53 @@ care = [
     "Down syndrome dementia aging care intellectual disability",
     "HIV dementia care management aging",
     "dementia care quality of life outcome measurement",
+
+    # Disease-specific palliative and end-of-life care
+    "Parkinson disease palliative care neuropalliative goals end of life",
+    "palliative care Parkinson disease implementation reach program",
+    "Parkinson disease dementia caregiver burden support intervention",
+    "Parkinson disease nursing home placement long-term care",
+    "Huntington disease palliative care end of life symptom management",
+    "Huntington disease caregiver burden family support intervention",
+    "Huntington disease multidisciplinary care coordination",
+    "Lewy body dementia caregiver burden management psychoeducation",
+    "Lewy body dementia end of life palliative care hospice",
+    "frontotemporal dementia caregiver burden young-onset support",
+    "behavioral variant FTD palliative care end of life management",
+    "frontotemporal dementia care home community placement",
+    "primary progressive aphasia communication augmentative alternative care",
+    "primary progressive aphasia caregiver quality of life support",
+    "ALS FTD multidisciplinary palliative care end of life",
+    "ALS-FTD caregiver burden communication support",
+    "progressive supranuclear palsy palliative care falls management",
+    "PSP caregiver burden quality of life support",
+    "corticobasal degeneration palliative care caregiver support",
+    "Creutzfeldt-Jakob disease palliative care rapid progression end of life",
+    "vascular dementia long-term care placement caregiver support",
+    "mixed dementia care planning caregiver support management",
+    "posterior cortical atrophy care support vision rehabilitation",
+
+    # Neuropalliative care (cross-type)
+    "neuropalliative care neurodegenerative dementia palliative implementation",
+    "neuropalliative care Parkinson Huntington ALS FTD PSP outcomes",
+
+    # Young-onset dementia
+    "young-onset dementia diagnosis workup genetic early-onset",
+    "early-onset dementia caregiver employment social impact care",
+
+    # Genetic counseling
+    "genetic counseling Huntington disease presymptomatic testing family",
+    "genetic counseling familial Alzheimer PSEN1 APP APOE4 family",
+    "genetic counseling frontotemporal dementia GRN MAPT C9orf72",
+
+    # Telemedicine and remote care
+    "telemedicine dementia remote monitoring cognitive assessment",
+    "telehealth dementia caregiver support program outcomes",
+
+    # Health equity and access
+    "dementia health disparities racial ethnic minority underdiagnosis",
+    "dementia care access rural underserved palliative implementation",
+
+    # Multidisciplinary care
+    "multidisciplinary memory clinic dementia specialist referral outcomes",
 ]
