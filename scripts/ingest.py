@@ -50,7 +50,9 @@ def fetch_alz() -> list[Document]:
 
 
 def fetch_aan() -> list[Document]:
-    raise NotImplementedError("AAN.com fetcher not yet implemented")
+    from backend.rag.sources.aan import fetch
+
+    return fetch()
 
 
 def main() -> None:
