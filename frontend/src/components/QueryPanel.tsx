@@ -87,8 +87,14 @@ export default function QueryPanel({ onQuery, isLoading, isStreaming, queryInten
                   h2: ({ children }) => <h2 className="text-base font-semibold text-slate-800 mt-4 mb-1.5 first:mt-0">{children}</h2>,
                   h3: ({ children }) => <h3 className="text-sm font-semibold text-slate-700 mt-3 mb-1 first:mt-0">{children}</h3>,
                   p: ({ children }) => <p className="text-sm text-slate-700 leading-relaxed mb-2">{children}</p>,
-                  strong: ({ children }) => {
-                    const text = typeof children === 'string' ? children : Array.isArray(children) ? children.join('') : ''
+                  strong: ({ children }) => <strong className="font-semibold text-slate-900">{children}</strong>,
+                  em: ({ children }) => <em className="italic">{children}</em>,
+                  ul: ({ children }) => <ul className="text-sm text-slate-700 list-disc list-outside ml-4 mb-2 space-y-0.5">{children}</ul>,
+                  ol: ({ children }) => <ol className="text-sm text-slate-700 list-decimal list-outside ml-4 mb-2 space-y-0.5">{children}</ol>,
+                  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                  hr: () => <hr className="my-4 border-slate-200" />,
+                  code: ({ children }) => {
+                    const text = typeof children === 'string' ? children : ''
                     if (/^\[\d+\]$/.test(text)) {
                       const n = text.slice(1, -1)
                       return (
@@ -100,14 +106,8 @@ export default function QueryPanel({ onQuery, isLoading, isStreaming, queryInten
                         </a>
                       )
                     }
-                    return <strong className="font-semibold text-slate-900">{children}</strong>
+                    return <code className="bg-slate-100 text-slate-800 text-xs font-mono px-1 py-0.5 rounded">{children}</code>
                   },
-                  em: ({ children }) => <em className="italic">{children}</em>,
-                  ul: ({ children }) => <ul className="text-sm text-slate-700 list-disc list-outside ml-4 mb-2 space-y-0.5">{children}</ul>,
-                  ol: ({ children }) => <ol className="text-sm text-slate-700 list-decimal list-outside ml-4 mb-2 space-y-0.5">{children}</ol>,
-                  li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                  hr: () => <hr className="my-4 border-slate-200" />,
-                  code: ({ children }) => <code className="bg-slate-100 text-slate-800 text-xs font-mono px-1 py-0.5 rounded">{children}</code>,
                   blockquote: ({ children }) => <blockquote className="border-l-2 border-slate-300 pl-3 text-slate-500 italic my-2">{children}</blockquote>,
                   a: ({ href, children }) => <a href={href} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">{children}</a>,
                 }}
@@ -167,10 +167,15 @@ export default function QueryPanel({ onQuery, isLoading, isStreaming, queryInten
   )
 }
 
-// Wrap bare [N] citation markers in **bold** so ReactMarkdown's strong
-// component can intercept them and render as anchor badges.
+// Wrap [N] citation markers in backtick code spans so the `code` component
+// can intercept them as anchor badges. Backtick spans are used instead of
+// **bold** because [N] inside **[N]** is parsed as a markdown link reference,
+// producing complex React children that fail the single-citation string check.
 function injectCitationMarkers(text: string): string {
-  return text.replace(/\[(\d+)\]/g, '**[$1]**')
+  return text
+    .replace(/\*{3,}/g, '')             // strip PDF extraction artifacts
+    .replace(/\](?=\[\d+\])/g, '] ')   // space before each adjacent [N] — lookahead avoids consuming the ] needed by the next match
+    .replace(/\[(\d+)\]/g, '`[$1]`')   // wrap each [N] in a code span
 }
 
 function Spinner() {

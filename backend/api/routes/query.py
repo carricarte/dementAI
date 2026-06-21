@@ -22,8 +22,11 @@ def handle_query(req: QueryRequest) -> QueryResponse:
     initial: GraphState = {
         "patient_id": req.patient_id,
         "query": req.query,
+        "is_on_topic": True,
         "stage": None,
+        "query_intent": None,
         "patient_record": None,
+        "patient_status_report": None,
         "specialist_response": None,
         "citations": [],
         "final_response": None,
@@ -37,4 +40,5 @@ def handle_query(req: QueryRequest) -> QueryResponse:
         stage=result["stage"],
         response=result["final_response"] or "",
         citations=result["citations"],
+        personalized=result.get("query_intent") == "patient_specific",
     )

@@ -35,6 +35,10 @@ ingest = [
     "pypdf>=3.0",
     "beautifulsoup4>=4.12",
 ]
+# Future: pip install -e ".[imaging]"
+# Will be needed when the Reader Agent is extended to handle raw medical file formats
+# (DICOM, NIfTI, FreeSurfer stats). Not required while inputs are structured data.
+# imaging = ["pydicom>=2.4", "nibabel>=5.0", "numpy>=1.24"]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",

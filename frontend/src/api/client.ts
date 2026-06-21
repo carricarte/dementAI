@@ -1,4 +1,4 @@
-import type { Citation, ClinicalStage, PatientRecord, QueryRequest, QueryResponse } from '../types'
+import type { Citation, ClinicalStage, PatientRecord, QueryRequest, QueryResponse, ResearchSummary } from '../types'
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
@@ -18,6 +18,14 @@ export async function fetchPatient(patientId: string): Promise<PatientRecord> {
   return data.record
 }
 
+export async function fetchResearch(patientId: string): Promise<ResearchSummary | null> {
+  try {
+    return await request<ResearchSummary>(`/patient/${encodeURIComponent(patientId)}/research`)
+  } catch {
+    return null
+  }
+}
+
 export async function submitQuery(req: QueryRequest): Promise<QueryResponse> {
   return request<QueryResponse>('/query/', {
     method: 'POST',
@@ -28,8 +36,9 @@ export async function submitQuery(req: QueryRequest): Promise<QueryResponse> {
 export async function streamQuery(
   req: QueryRequest,
   onStage: (stage: ClinicalStage) => void,
+  onIntent: (intent: string) => void,
   onChunk: (text: string) => void,
-  onDone: (citations: Citation[]) => void,
+  onDone: (citations: Citation[], personalized: boolean, response?: string) => void,
 ): Promise<void> {
   const res = await fetch('/query/stream', {
     method: 'POST',
@@ -56,8 +65,9 @@ export async function streamQuery(
       if (!line.startsWith('data: ')) continue
       const event = JSON.parse(line.slice(6))
       if (event.type === 'stage') onStage(event.stage as ClinicalStage)
+      else if (event.type === 'intent') onIntent(event.intent as string)
       else if (event.type === 'chunk') onChunk(event.text as string)
-      else if (event.type === 'done') onDone(event.citations as Citation[])
+      else if (event.type === 'done') onDone(event.citations as Citation[], Boolean(event.personalized), event.response as string | undefined)
       else if (event.type === 'error') throw new Error(event.message as string)
     }
   }

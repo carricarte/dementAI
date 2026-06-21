@@ -51,7 +51,7 @@ Pending workups: {record.pending_workups or "none"}"""
         rq = state["query"]
         patient_section = ""
 
-    ctx = retrieve(rq, source_filter=["aan", "awmf", "alz"])
+    ctx = retrieve(rq, source_filter=["aan", "awmf", "alz", "pubmed"])
 
     prompt = f"""{_SYSTEM}
 

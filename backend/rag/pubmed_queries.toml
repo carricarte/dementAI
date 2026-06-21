@@ -1,274 +1,497 @@
 # PubMed search queries for the DementIA knowledge base.
-# Each string is sent verbatim to NCBI E-utilities esearch (relevance-sorted).
-# Organised by clinical stage; within each stage queries are grouped by topic
-# or dementia type. Add / remove lines freely — one query per line.
+# All queries use MeSH (Medical Subject Headings) field tags for precision and recall.
+# Format: "MeSH Term"[MeSH Terms] AND/OR "Other Term"[MeSH Terms]
+# Use [Title/Abstract] only when no MeSH heading exists for a concept.
+# Publication type filters: [Publication Type] — e.g. "Randomized Controlled Trial"[Publication Type]
 #
 # Run:  python scripts/ingest.py --source pubmed [--drop]
 
 [settings]
 max_results_per_query = 100   # articles per query (sorted by relevance)
-date_range_years      = 10    # restrict to last N years
+date_range_years      = 15    # restrict to last N years
 
 [queries]
 
 # ── Screening ────────────────────────────────────────────────────────────────
 screening = [
-    # General cognitive assessment
-    "MMSE Mini-Mental State Examination sensitivity specificity dementia",
-    "MoCA Montreal Cognitive Assessment validation mild cognitive impairment",
-    "CDR Clinical Dementia Rating scale administration reliability",
-    "ADAS-Cog Alzheimer Assessment Scale clinical trials validity",
-    "brief cognitive screening primary care older adults",
-    "neuropsychological battery dementia differential diagnosis",
-    "subjective cognitive decline preclinical dementia biomarkers",
-    "mild cognitive impairment MCI diagnostic criteria conversion rate",
-    "cognitive screening blood-based biomarkers Alzheimer early detection",
-    "delirium cognitive impairment differential diagnosis assessment",
-    "geriatric depression GDS cognitive testing confounding",
+    # General cognitive assessment tools
+    '"Mental Status and Dementia Tests"[MeSH Terms]',
+    '"Neuropsychological Tests"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Mass Screening"[MeSH Terms] AND "Primary Health Care"[MeSH Terms]',
 
-    # Type-specific screening approaches
-    "Alzheimer disease preclinical screening amyloid PET blood biomarkers",
-    "Parkinson disease cognitive screening MCI PDD",
-    "Huntington disease cognitive assessment prodromal",
-    "Huntington disease prodromal cognitive screening CAG repeat threshold",
-    "Down syndrome dementia screening cognitive decline trisomy 21",
-    "Down syndrome dementia screening cognitive decline trisomy 21 adults",
-    "HIV neurocognitive disorder screening battery HAND",
-    "Lewy body dementia screening prodromal REM sleep behavior disorder cognitive",
-    "frontotemporal dementia early detection screening behavioral symptoms primary care",
-    "vascular cognitive impairment screening white matter burden assessment",
+    # Alzheimer's disease — screening
+    '"Alzheimer Disease"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Biomarkers"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Blood"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # Blood-based biomarkers — cross-type
+    '"tau Proteins"[MeSH Terms] AND "Blood"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Amyloid beta-Peptides"[MeSH Terms] AND "Blood"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Neurofilament Proteins"[MeSH Terms] AND "Blood"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    'phospho-tau 217[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms]',
+
+    # Vascular dementia — screening
+    '"Dementia, Vascular"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Dementia, Vascular"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms]',
+    '"Cerebral Small Vessel Diseases"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+
+    # Lewy body dementia — screening
+    '"Lewy Body Disease"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"REM Sleep Behavior Disorder"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms]',
+    '"Lewy Body Disease"[MeSH Terms] AND "Prodromal Symptoms"[MeSH Terms]',
+
+    # FTD behavioral — screening
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms]',
+
+    # Parkinson dementia — screening
+    '"Parkinson Disease"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Parkinson Disease"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms]',
+
+    # Huntington disease — screening
+    '"Huntington Disease"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Prodromal Symptoms"[MeSH Terms]',
+
+    # CTE — screening
+    '"Chronic Traumatic Encephalopathy"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+    '"Brain Concussion"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # HIV dementia — screening
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms]',
+
+    # Wernicke-Korsakoff — screening
+    '("Wernicke Encephalopathy"[MeSH Terms] OR "Korsakoff Syndrome"[MeSH Terms]) AND "Early Diagnosis"[MeSH Terms]',
+    '"Thiamine Deficiency"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+
+    # Down syndrome dementia — screening
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    '"Down Syndrome"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Early Diagnosis"[MeSH Terms]',
+
+    # MCI — screening
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Neuropsychological Tests"[MeSH Terms] AND "Primary Health Care"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Biomarkers"[MeSH Terms] AND "Prognosis"[MeSH Terms]',
+    'subjective cognitive decline[Title/Abstract] AND "Biomarkers"[MeSH Terms]',
+
+    # Psychometric validation — CDR / CDR-SB / MMSE score interpretation
+    '"Clinical Dementia Rating"[MeSH Terms] AND "Sensitivity and Specificity"[MeSH Terms]',
+    '"Clinical Dementia Rating"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Validation Studies as Topic"[MeSH Terms]',
+    'CDR sum of boxes[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms]',
+    'CDR-SB[Title/Abstract] AND "Clinical Trials as Topic"[MeSH Terms]',
+    '"Mini-Mental State Examination"[MeSH Terms] AND "Sensitivity and Specificity"[MeSH Terms]',
+    '"Mini-Mental State Examination"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Cutoff"[Title/Abstract]',
+    '"Geriatric Assessment"[MeSH Terms] AND "Sensitivity and Specificity"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Montreal Cognitive Assessment"[MeSH Terms] AND "Sensitivity and Specificity"[MeSH Terms]',
+    '"Neuropsychological Tests"[MeSH Terms] AND "Psychometrics"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+
+    # Age-stratified screening thresholds
+    '"Age Factors"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Mass Screening"[MeSH Terms]',
+    'screening age threshold[Title/Abstract] AND "Dementia"[MeSH Terms]',
 ]
 
 # ── Diagnosis ────────────────────────────────────────────────────────────────
 diagnosis = [
-    # Biomarkers and neuroimaging (cross-type)
-    "ATN framework Alzheimer biological staging CSF amyloid tau",
-    "amyloid PET clinical diagnosis Alzheimer mild cognitive impairment",
-    "tau PET imaging tauopathy differential diagnosis dementia",
-    "FDG-PET hypometabolism dementia differential diagnosis",
-    "brain MRI hippocampal atrophy white matter dementia diagnosis",
-    "CSF biomarkers neurofilament light chain dementia differential",
-    "genetic testing APOE PSEN1 APP GRN C9orf72 MAPT dementia",
-    "plasma phospho-tau 217 Alzheimer diagnosis blood test",
+    # Alzheimer's disease — imaging and biomarkers
+    '"Alzheimer Disease"[MeSH Terms] AND "Amyloid"[MeSH Terms] AND "Positron-Emission Tomography"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "tau Proteins"[MeSH Terms] AND "Positron-Emission Tomography"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Cerebrospinal Fluid"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Magnetic Resonance Imaging"[MeSH Terms] AND "Hippocampus"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Fluorodeoxyglucose F18"[MeSH Terms] AND "Positron-Emission Tomography"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Genetic Testing"[MeSH Terms]',
+    'posterior cortical atrophy[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Blood"[MeSH Terms] AND "phosphotau"[Title/Abstract]',
 
-    # Alzheimer's disease
-    "Alzheimer disease NIA-AA diagnostic criteria 2024 staging",
-    "early-onset Alzheimer disease diagnosis genetic workup",
-    "posterior cortical atrophy PCA Alzheimer variant diagnosis clinical features",
+    # Vascular dementia — diagnosis
+    '"Dementia, Vascular"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+    '"Dementia, Vascular"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+    '"Dementia, Vascular"[MeSH Terms] AND "Magnetic Resonance Imaging"[MeSH Terms]',
+    '"Cerebral Small Vessel Diseases"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
 
-    # Vascular dementia
-    "vascular dementia NINDS-AIREN criteria neuroimaging diagnosis",
-    "cerebral small vessel disease cognitive impairment diagnosis",
-    "strategic infarct dementia diagnosis clinical features",
+    # Lewy body dementia — diagnosis
+    '"Lewy Body Disease"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Lewy Body Disease"[MeSH Terms] AND "Tomography, Emission-Computed, Single-Photon"[MeSH Terms]',
+    '"Lewy Body Disease"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+    '"REM Sleep Behavior Disorder"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
 
-    # Lewy body dementia
-    "Lewy body dementia DLB consortium diagnostic criteria fourth report",
-    "REM sleep behavior disorder dementia prodrome Lewy body",
-    "dopamine transporter SPECT DLB diagnosis",
+    # FTD spectrum — diagnosis
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Genetic Testing"[MeSH Terms]',
 
-    # Frontotemporal dementia spectrum
-    "behavioral variant frontotemporal dementia bvFTD diagnostic criteria",
-    "semantic variant primary progressive aphasia svPPA diagnosis",
-    "nonfluent agrammatic primary progressive aphasia nfvPPA diagnosis",
-    "FTD motor neuron disease TDP-43 ALS-FTD clinical diagnosis",
-    "frontotemporal dementia GRN MAPT C9orf72 genetic diagnosis",
+    # PPA — diagnosis
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
 
-    # Parkinson spectrum
-    "Parkinson disease dementia PDD diagnosis criteria DLB distinction",
-    "progressive supranuclear palsy PSP Richardson syndrome diagnosis",
-    "corticobasal syndrome CBS corticobasal degeneration diagnosis",
+    # FTD-MND / ALS-FTD — diagnosis
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Amyotrophic Lateral Sclerosis"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"TDP-43 Proteinopathies"[MeSH Terms] AND "Frontotemporal Dementia"[MeSH Terms]',
 
-    # Mixed dementia
-    "mixed Alzheimer vascular dementia pathology diagnosis prevalence",
+    # Mixed dementia — diagnosis
+    '"Alzheimer Disease"[MeSH Terms] AND "Dementia, Vascular"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+    'mixed pathology dementia[Title/Abstract] AND "Diagnosis"[MeSH Terms]',
 
-    # Rare and secondary dementias
-    "normal pressure hydrocephalus NPH clinical triad diagnosis tap test",
-    "Creutzfeldt-Jakob disease CJD prion rapidly progressive dementia diagnosis",
-    "Wernicke encephalopathy Korsakoff syndrome diagnosis thiamine deficiency",
-    "HIV-associated neurocognitive disorder HAND diagnosis criteria staging",
-    "Huntington disease dementia cognitive decline genetic diagnosis",
-    "LATE limbic-predominant TDP-43 encephalopathy neuropathology diagnosis",
-    "chronic traumatic encephalopathy CTE neuropathology diagnosis biomarkers",
-    "Down syndrome Alzheimer dementia diagnosis APP trisomy 21",
+    # Parkinson dementia — diagnosis
+    '"Parkinson Disease"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Parkinson Disease"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+
+    # Huntington disease — diagnosis
+    '"Huntington Disease"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Genetic Testing"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # Corticobasal degeneration — diagnosis
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+
+    # PSP — diagnosis
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # Posterior cortical atrophy — diagnosis
+    'posterior cortical atrophy[Title/Abstract] AND "Neuroimaging"[MeSH Terms]',
+    'posterior cortical atrophy[Title/Abstract] AND "Biomarkers"[MeSH Terms]',
+    'posterior cortical atrophy[Title/Abstract] AND "Diagnosis, Differential"[MeSH Terms]',
+
+    # LATE — diagnosis
+    '"TDP-43 Proteinopathies"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    'LATE limbic TDP-43[Title/Abstract] AND "Aged"[MeSH Terms]',
+
+    # CTE — diagnosis
+    '"Chronic Traumatic Encephalopathy"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Chronic Traumatic Encephalopathy"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # CJD — diagnosis
+    '"Creutzfeldt-Jakob Syndrome"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Creutzfeldt-Jakob Syndrome"[MeSH Terms] AND "Cerebrospinal Fluid"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+    '"Prion Diseases"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+
+    # HIV dementia — diagnosis
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+
+    # Wernicke-Korsakoff — diagnosis
+    '"Wernicke Encephalopathy"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Korsakoff Syndrome"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+
+    # NPH — diagnosis
+    '"Hydrocephalus, Normal Pressure"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Hydrocephalus, Normal Pressure"[MeSH Terms] AND "Neuroimaging"[MeSH Terms]',
+    '"Hydrocephalus, Normal Pressure"[MeSH Terms] AND "Cerebrospinal Fluid"[MeSH Terms]',
+
+    # Down syndrome dementia — diagnosis
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Diagnosis"[MeSH Terms]',
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+
+    # MCI — diagnosis and progression
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Disease Progression"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Biomarkers"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
+
+    # Genetic testing — cross-type
+    '"APOE"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Genetic Testing"[MeSH Terms]',
+    'PSEN1[Title/Abstract] OR MAPT[Title/Abstract] OR GRN[Title/Abstract] OR C9orf72[Title/Abstract] AND "Dementia"[MeSH Terms] AND "Genetic Testing"[MeSH Terms]',
+
+    # Young-onset dementia — diagnosis
+    'young onset dementia[Title/Abstract] AND "Diagnosis"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Age of Onset"[MeSH Terms] AND "Diagnosis, Differential"[MeSH Terms]',
 ]
 
 # ── Prevention ───────────────────────────────────────────────────────────────
 prevention = [
-    # Evidence reviews
-    "dementia prevention modifiable risk factors Lancet Commission 2024",
-    "Alzheimer disease prevention clinical trials lifestyle interventions",
-    "mild cognitive impairment MCI conversion prevention intervention",
+    # Cross-type modifiable risk factors
+    '"Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Life Style"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Risk Factors"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
 
-    # Vascular risk factors
-    "hypertension treatment midlife cognitive decline dementia prevention",
-    "type 2 diabetes dementia risk insulin resistance prevention",
-    "atrial fibrillation anticoagulation dementia prevention stroke",
-    "hyperlipidaemia statin cognitive decline dementia prevention",
-    "obesity BMI midlife cognitive decline dementia risk",
+    # Alzheimer's disease — prevention
+    '"Alzheimer Disease"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Life Style"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Risk Reduction Behavior"[MeSH Terms]',
 
-    # Lifestyle
-    "physical activity aerobic exercise dementia prevention randomized trial",
-    "Mediterranean diet MIND diet cognitive decline prevention",
-    "smoking cessation alcohol reduction dementia prevention",
-    "cognitive reserve education lifelong learning dementia prevention",
-    "social isolation loneliness dementia risk intervention",
+    # Vascular risk factors — prevention
+    '"Hypertension"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Secondary Prevention"[MeSH Terms]',
+    '"Diabetes Mellitus, Type 2"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Atrial Fibrillation"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Secondary Prevention"[MeSH Terms]',
+    '"Hyperlipidemias"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Obesity"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
 
-    # Sensory and mental health
-    "hearing loss correction hearing aids dementia prevention randomized",
-    "visual impairment correction dementia risk prevention",
-    "depression treatment cognitive decline dementia prevention",
+    # Lifestyle interventions — prevention
+    '"Exercise"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Diet, Mediterranean"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms]',
+    '"Smoking Cessation"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Alcohol Drinking"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Social Isolation"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Cognitive Reserve"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms]',
 
-    # Sleep and injury
-    "obstructive sleep apnoea CPAP cognitive decline dementia prevention",
-    "traumatic brain injury CTE dementia prevention risk reduction",
+    # Sensory and mental health — prevention
+    '"Hearing Loss"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Vision Disorders"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Depression"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Risk Factors"[MeSH Terms]',
+    '"Sleep Apnea, Obstructive"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
 
-    # Genetic and secondary dementia prevention
-    "vascular dementia secondary prevention antiplatelet anticoagulation",
-    "Wernicke encephalopathy thiamine prophylaxis alcohol use disorder",
-    "HIV dementia antiretroviral therapy cognitive prevention",
-    "Huntington disease disease modification prevention gene silencing antisense oligonucleotide",
-    "Down syndrome Alzheimer prevention amyloid intervention trisomy 21 trial",
+    # CTE — prevention
+    '"Brain Injuries, Traumatic"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Chronic Traumatic Encephalopathy"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+
+    # Vascular dementia — secondary prevention
+    '"Dementia, Vascular"[MeSH Terms] AND "Secondary Prevention"[MeSH Terms]',
+    '"Stroke"[MeSH Terms] AND "Cognitive Dysfunction"[MeSH Terms] AND "Secondary Prevention"[MeSH Terms]',
+
+    # Huntington disease — disease modification / prevention
+    '"Huntington Disease"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    'gene silencing[Title/Abstract] AND "Huntington Disease"[MeSH Terms]',
+    'antisense oligonucleotide[Title/Abstract] AND "Huntington Disease"[MeSH Terms]',
+
+    # Wernicke-Korsakoff — prevention
+    '"Thiamine"[MeSH Terms] AND "Wernicke Encephalopathy"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Alcoholism"[MeSH Terms] AND "Wernicke Encephalopathy"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+
+    # HIV dementia — prevention
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Anti-Retroviral Agents"[MeSH Terms] AND "AIDS Dementia Complex"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+
+    # MCI — prevention / conversion
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    '"Cognitive Dysfunction"[MeSH Terms] AND "Disease Progression"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+
+    # Down syndrome dementia — prevention
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Primary Prevention"[MeSH Terms]',
+    'amyloid intervention[Title/Abstract] AND "Down Syndrome"[MeSH Terms] AND "Clinical Trial"[Publication Type]',
 ]
 
 # ── Treatment ─────────────────────────────────────────────────────────────────
 treatment = [
-    # Cholinesterase inhibitors
-    "donepezil Alzheimer disease randomized controlled trial efficacy",
-    "rivastigmine Alzheimer disease Parkinson dementia clinical trial",
-    "galantamine Alzheimer disease efficacy safety meta-analysis",
-    "cholinesterase inhibitors dementia systematic review meta-analysis",
+    # Cholinesterase inhibitors — Alzheimer's
+    '"Donepezil"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Randomized Controlled Trial"[Publication Type]',
+    '"Rivastigmine"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Randomized Controlled Trial"[Publication Type]',
+    '"Galantamine"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Randomized Controlled Trial"[Publication Type]',
+    '"Cholinesterase Inhibitors"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Meta-Analysis"[Publication Type]',
 
-    # Memantine and combination
-    "memantine Alzheimer disease moderate severe treatment randomized",
-    "combination memantine donepezil Alzheimer disease clinical trial",
+    # Memantine — Alzheimer's
+    '"Memantine"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Randomized Controlled Trial"[Publication Type]',
+    '"Memantine"[MeSH Terms] AND "Donepezil"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms]',
 
-    # Disease-modifying (anti-amyloid)
-    "lecanemab anti-amyloid antibody Alzheimer phase 3 CLARITY trial",
-    "donanemab TRAILBLAZER-ALZ Alzheimer disease treatment",
-    "ARIA amyloid-related imaging abnormalities anti-amyloid therapy management",
+    # Anti-amyloid / disease-modifying — Alzheimer's
+    'lecanemab[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms] AND "Clinical Trial"[Publication Type]',
+    'donanemab[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms] AND "Clinical Trial"[Publication Type]',
+    'aducanumab[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms]',
+    '"Amyloid beta-Peptides"[MeSH Terms] AND "Immunotherapy"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms]',
+    'amyloid related imaging abnormalities[Title/Abstract] AND "Alzheimer Disease"[MeSH Terms]',
 
-    # Vascular dementia
-    "vascular dementia treatment vascular risk factor management pharmacological",
+    # Vascular dementia — treatment
+    '"Dementia, Vascular"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Dementia, Vascular"[MeSH Terms] AND "Risk Factors"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
 
-    # Lewy body dementia
-    "Lewy body dementia rivastigmine cholinesterase treatment",
-    "Lewy body dementia antipsychotic neuroleptic sensitivity contraindication",
-    "REM sleep behavior disorder clonazepam melatonin treatment dementia",
+    # Lewy body dementia — treatment
+    '"Rivastigmine"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms]',
+    '"Cholinesterase Inhibitors"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms]',
+    '"Antipsychotic Agents"[MeSH Terms] AND "Lewy Body Disease"[MeSH Terms] AND "Adverse Effects"[MeSH Terms]',
+    '"REM Sleep Behavior Disorder"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
 
-    # FTD spectrum
-    "behavioral variant FTD SSRI sertraline trazodone symptom treatment",
-    "primary progressive aphasia speech language therapy intervention",
-    "FTD-ALS riluzole symptom management palliative",
+    # FTD — treatment
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Serotonin Uptake Inhibitors"[MeSH Terms] AND "Frontotemporal Dementia"[MeSH Terms]',
 
-    # Parkinson and related
-    "Parkinson disease dementia treatment pharmacological management",
-    "progressive supranuclear palsy PSP pharmacological supportive treatment",
-    "corticobasal syndrome pharmacological treatment symptom management",
+    # PPA — treatment
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Language Therapy"[MeSH Terms]',
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
 
-    # Other types
-    "normal pressure hydrocephalus ventriculoperitoneal shunt outcome",
-    "Huntington disease dementia psychiatric symptom pharmacological treatment",
-    "Wernicke-Korsakoff syndrome thiamine treatment dosing intravenous",
-    "HIV dementia antiretroviral therapy cognitive improvement",
-    "Down syndrome Alzheimer dementia pharmacological treatment",
-    "Creutzfeldt-Jakob disease treatment supportive management prion",
-    "posterior cortical atrophy treatment cholinesterase occupational therapy",
-    "mixed Alzheimer vascular dementia treatment pharmacological management",
+    # FTD-MND / ALS-FTD — treatment
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Amyotrophic Lateral Sclerosis"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Riluzole"[MeSH Terms] AND "Amyotrophic Lateral Sclerosis"[MeSH Terms]',
 
-    # BPSD and symptom management
-    "behavioral psychological symptoms dementia BPSD antipsychotic risk benefit",
-    "agitation dementia non-pharmacological intervention first-line",
-    "depression anxiety dementia pharmacological treatment SSRI",
-    "sleep disturbance insomnia dementia treatment non-pharmacological",
-    "pain assessment management non-verbal dementia",
-    "cognitive stimulation therapy CST dementia randomized trial",
+    # Mixed dementia — treatment
+    '"Dementia"[MeSH Terms] AND "Comorbidity"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+
+    # Parkinson dementia — treatment
+    '"Parkinson Disease"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Rivastigmine"[MeSH Terms] AND "Parkinson Disease"[MeSH Terms]',
+    '"Donepezil"[MeSH Terms] AND "Parkinson Disease"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Parkinson Disease"[MeSH Terms] AND "Deep Brain Stimulation"[MeSH Terms] AND "Cognition"[MeSH Terms]',
+
+    # Huntington disease — treatment
+    '"Huntington Disease"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Tetrabenazine"[MeSH Terms] AND "Huntington Disease"[MeSH Terms]',
+    'deutetrabenazine[Title/Abstract] AND "Huntington Disease"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Antidepressive Agents"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Antipsychotic Agents"[MeSH Terms]',
+
+    # Corticobasal degeneration — treatment
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Rehabilitation"[MeSH Terms]',
+
+    # PSP — treatment
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Rehabilitation"[MeSH Terms]',
+
+    # Posterior cortical atrophy — treatment
+    'posterior cortical atrophy[Title/Abstract] AND "Drug Therapy"[MeSH Terms]',
+    'posterior cortical atrophy[Title/Abstract] AND "Rehabilitation"[MeSH Terms]',
+
+    # CJD — treatment / supportive care
+    '"Creutzfeldt-Jakob Syndrome"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Prion Diseases"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+
+    # HIV dementia — treatment
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Anti-Retroviral Agents"[MeSH Terms]',
+    '"Anti-Retroviral Agents"[MeSH Terms] AND "Cognition"[MeSH Terms] AND "HIV Infections"[MeSH Terms]',
+
+    # Wernicke-Korsakoff — treatment
+    '"Thiamine"[MeSH Terms] AND "Wernicke Encephalopathy"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Korsakoff Syndrome"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+
+    # NPH — treatment
+    '"Hydrocephalus, Normal Pressure"[MeSH Terms] AND "Ventriculoperitoneal Shunt"[MeSH Terms]',
+    '"Hydrocephalus, Normal Pressure"[MeSH Terms] AND "Cerebrospinal Fluid Shunts"[MeSH Terms]',
+
+    # Down syndrome dementia — treatment
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Cholinesterase Inhibitors"[MeSH Terms] AND "Down Syndrome"[MeSH Terms]',
+
+    # BPSD — cross-type symptom management
+    '"Dementia"[MeSH Terms] AND "Behavioral Symptoms"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Psychomotor Agitation"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Antipsychotic Agents"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Safety"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Depression"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Sleep Wake Disorders"[MeSH Terms] AND "Drug Therapy"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Cognitive Training"[MeSH Terms]',
+    '"Pain Management"[MeSH Terms] AND "Dementia"[MeSH Terms]',
 ]
 
 # ── Care ──────────────────────────────────────────────────────────────────────
 care = [
-    # Care planning
-    "dementia care planning family goals of care communication",
-    "advance care planning dementia capacity assessment decision-making",
-    "dementia power of attorney financial legal planning capacity",
+    # Advance care planning and goals of care — cross-type
+    '"Advance Care Planning"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Palliative Care"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Goals"[MeSH Terms]',
+    '"Decision Making"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Family"[MeSH Terms]',
+    '"Mental Competency"[MeSH Terms] AND "Dementia"[MeSH Terms]',
 
-    # Caregiver
-    "caregiver burden dementia psychoeducation intervention randomized",
-    "caregiver stress burnout dementia support program",
-    "respite care dementia caregiver effectiveness",
-    "dementia caregiver dyadic intervention family",
+    # Caregiver support — cross-type
+    '"Caregivers"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Burden"[Title/Abstract]',
+    '"Caregivers"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Burnout, Psychological"[MeSH Terms]',
+    '"Respite Care"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Caregivers"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Psychoeducation"[Title/Abstract]',
 
-    # Safety
-    "driving cessation dementia safety assessment guidelines",
-    "dementia wandering elopement safety home monitoring",
-    "falls prevention dementia older adults intervention",
-    "medication management safety dementia self-administration",
+    # Safety — cross-type
+    '"Automobile Driving"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Wandering Behavior"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Accidental Falls"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Prevention and Control"[MeSH Terms]',
 
-    # Functional and daily care
-    "activities of daily living ADL dementia care assistance",
-    "nutritional management dysphagia dementia weight loss",
-    "pain assessment non-verbal dementia care",
+    # Functional and daily care — cross-type
+    '"Activities of Daily Living"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Nutritional Support"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Deglutition Disorders"[MeSH Terms] AND "Dementia"[MeSH Terms]',
 
-    # Placement and setting
-    "memory care unit nursing home placement dementia criteria",
-    "home care community-based dementia program outcomes",
-    "young-onset early-onset dementia care support needs",
+    # Long-term care placement — cross-type
+    '"Nursing Homes"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Home Care Services"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Long-Term Care"[MeSH Terms] AND "Dementia"[MeSH Terms]',
 
-    # End of life
-    "palliative care hospice dementia end of life outcomes",
-    "dementia end of life feeding tube artificial nutrition",
-    "comfort care symptom management advanced dementia",
+    # End of life — cross-type
+    '"Palliative Care"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Hospice Care"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Terminal Care"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Enteral Nutrition"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Ethics, Medical"[MeSH Terms]',
 
-    # Special populations
-    "Down syndrome dementia aging care intellectual disability",
-    "HIV dementia care management aging",
-    "dementia care quality of life outcome measurement",
+    # Alzheimer's disease — care
+    '"Alzheimer Disease"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Alzheimer Disease"[MeSH Terms] AND "Caregivers"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
 
-    # Disease-specific palliative and end-of-life care
-    "Parkinson disease palliative care neuropalliative goals end of life",
-    "palliative care Parkinson disease implementation reach program",
-    "Parkinson disease dementia caregiver burden support intervention",
-    "Parkinson disease nursing home placement long-term care",
-    "Huntington disease palliative care end of life symptom management",
-    "Huntington disease caregiver burden family support intervention",
-    "Huntington disease multidisciplinary care coordination",
-    "Lewy body dementia caregiver burden management psychoeducation",
-    "Lewy body dementia end of life palliative care hospice",
-    "frontotemporal dementia caregiver burden young-onset support",
-    "behavioral variant FTD palliative care end of life management",
-    "frontotemporal dementia care home community placement",
-    "primary progressive aphasia communication augmentative alternative care",
-    "primary progressive aphasia caregiver quality of life support",
-    "ALS FTD multidisciplinary palliative care end of life",
-    "ALS-FTD caregiver burden communication support",
-    "progressive supranuclear palsy palliative care falls management",
-    "PSP caregiver burden quality of life support",
-    "corticobasal degeneration palliative care caregiver support",
-    "Creutzfeldt-Jakob disease palliative care rapid progression end of life",
-    "vascular dementia long-term care placement caregiver support",
-    "mixed dementia care planning caregiver support management",
-    "posterior cortical atrophy care support vision rehabilitation",
+    # Vascular dementia — care
+    '"Dementia, Vascular"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+    '"Dementia, Vascular"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
 
-    # Neuropalliative care (cross-type)
-    "neuropalliative care neurodegenerative dementia palliative implementation",
-    "neuropalliative care Parkinson Huntington ALS FTD PSP outcomes",
+    # Lewy body dementia — care
+    '"Lewy Body Disease"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Lewy Body Disease"[MeSH Terms] AND "Caregivers"[MeSH Terms] AND "Burden"[Title/Abstract]',
 
-    # Young-onset dementia
-    "young-onset dementia diagnosis workup genetic early-onset",
-    "early-onset dementia caregiver employment social impact care",
+    # FTD — care
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
 
-    # Genetic counseling
-    "genetic counseling Huntington disease presymptomatic testing family",
-    "genetic counseling familial Alzheimer PSEN1 APP APOE4 family",
-    "genetic counseling frontotemporal dementia GRN MAPT C9orf72",
+    # PPA — care
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Communication Aids for Disabled"[MeSH Terms]',
+    '"Aphasia, Primary Progressive"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
 
-    # Telemedicine and remote care
-    "telemedicine dementia remote monitoring cognitive assessment",
-    "telehealth dementia caregiver support program outcomes",
+    # FTD-MND / ALS-FTD — care
+    '"Frontotemporal Dementia"[MeSH Terms] AND "Amyotrophic Lateral Sclerosis"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Amyotrophic Lateral Sclerosis"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+
+    # Mixed dementia — care
+    '"Dementia"[MeSH Terms] AND "Comorbidity"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Multiple Chronic Conditions"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+
+    # Parkinson dementia — care (root cause of failed example)
+    '"Parkinson Disease"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Parkinson Disease"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Parkinson Disease"[MeSH Terms] AND "Caregivers"[MeSH Terms] AND "Burden"[Title/Abstract]',
+    '"Parkinson Disease"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+    'neuropalliative care[Title/Abstract] AND "Parkinson Disease"[MeSH Terms]',
+
+    # Huntington disease — care
+    '"Huntington Disease"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Patient Care Team"[MeSH Terms]',
+    '"Huntington Disease"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+
+    # Corticobasal degeneration — care
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Corticobasal Degeneration"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+
+    # PSP — care
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+    '"Supranuclear Palsy, Progressive"[MeSH Terms] AND "Accidental Falls"[MeSH Terms] AND "Prevention and Control"[MeSH Terms]',
+
+    # Posterior cortical atrophy — care
+    'posterior cortical atrophy[Title/Abstract] AND "Caregivers"[MeSH Terms]',
+    'posterior cortical atrophy[Title/Abstract] AND "Rehabilitation"[MeSH Terms]',
+
+    # CJD — care
+    '"Creutzfeldt-Jakob Syndrome"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"Creutzfeldt-Jakob Syndrome"[MeSH Terms] AND "Terminal Care"[MeSH Terms]',
+
+    # HIV dementia — care
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+    '"AIDS Dementia Complex"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+
+    # Down syndrome dementia — care
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+    '"Down Syndrome"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms] AND "Caregivers"[MeSH Terms]',
+    '"Down Syndrome"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+
+    # Neuropalliative care — cross-type neurodegenerative
+    'neuropalliative care[Title/Abstract] AND "Neurodegenerative Diseases"[MeSH Terms]',
+    '"Neurodegenerative Diseases"[MeSH Terms] AND "Palliative Care"[MeSH Terms]',
+
+    # Young-onset / early-onset dementia — care
+    'young onset dementia[Title/Abstract] AND "Caregivers"[MeSH Terms]',
+    '"Dementia"[MeSH Terms] AND "Age of Onset"[MeSH Terms] AND "Long-Term Care"[MeSH Terms]',
+
+    # Genetic counseling — familial dementias
+    '"Genetic Counseling"[MeSH Terms] AND "Huntington Disease"[MeSH Terms]',
+    '"Genetic Counseling"[MeSH Terms] AND "Alzheimer Disease"[MeSH Terms]',
+    '"Genetic Counseling"[MeSH Terms] AND "Frontotemporal Dementia"[MeSH Terms]',
+
+    # Telemedicine / telehealth
+    '"Telemedicine"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Telemedicine"[MeSH Terms] AND "Caregivers"[MeSH Terms] AND "Dementia"[MeSH Terms]',
 
     # Health equity and access
-    "dementia health disparities racial ethnic minority underdiagnosis",
-    "dementia care access rural underserved palliative implementation",
+    '"Healthcare Disparities"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Health Equity"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Rural Population"[MeSH Terms] AND "Dementia"[MeSH Terms] AND "Health Services Accessibility"[MeSH Terms]',
 
-    # Multidisciplinary care
-    "multidisciplinary memory clinic dementia specialist referral outcomes",
+    # Multidisciplinary care teams
+    '"Patient Care Team"[MeSH Terms] AND "Dementia"[MeSH Terms]',
+    '"Memory Disorders"[MeSH Terms] AND "Ambulatory Care Facilities"[MeSH Terms]',
 ]

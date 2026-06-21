@@ -1,7 +1,6 @@
 """Deterministic clinical calculators used by screening and treatment specialists."""
 from __future__ import annotations
 
-
 # ── Cognitive assessment ───────────────────────────────────────────────────────
 
 def interpret_cdr(score: float) -> str:

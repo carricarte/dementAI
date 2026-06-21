@@ -56,7 +56,7 @@ Current medications: {record.current_medications or "none"}"""
         rq = state["query"]
         patient_section = ""
 
-    ctx = retrieve(rq, source_filter=["alz", "aan"])
+    ctx = retrieve(rq, source_filter=["alz", "aan", "awmf", "pubmed"])
 
     prompt = f"""{_SYSTEM}
 

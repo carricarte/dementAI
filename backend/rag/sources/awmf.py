@@ -25,6 +25,11 @@ from backend.rag.ingestion import Document, make_id
 # Register number → canonical title
 AWMF_TARGETS: dict[str, str] = {
     "038-013": "S3-Leitlinie Demenzen",
+    "030-010": "Parkinson-Krankheit",
+    "030-028": "Chorea / Morbus Huntington",
+    "030-042": "Creutzfeldt-Jakob-Krankheit",
+    "030-044": "HIV-1-assoziierte neurologische Erkrankungen",
+    "030-001": "Motoneuronerkrankungen",
 }
 
 # AWMF Leitlinien-Register REST API (public key embedded in register.awmf.org frontend)

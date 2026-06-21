@@ -14,6 +14,10 @@ data/lancedb/
 data/patients/
 data/audit/
 data/sources/
+data/synthetic/
+
+# local / one-off scripts (not part of the committed codebase)
+scripts/generate_synthetic_data.py
 
 # frontend
 node_modules/

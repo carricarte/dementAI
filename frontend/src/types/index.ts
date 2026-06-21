@@ -38,14 +38,41 @@ export interface PatientRecord {
   visits: VisitRecord[];
 }
 
+export interface MRISummary {
+  field_T?: number | null;
+  hippo_l_mm3?: number | null;
+  hippo_r_mm3?: number | null;
+  wmh_cm3?: number | null;
+  mta_l?: number | null;
+  mta_r?: number | null;
+  amyloid_status?: string | null;
+}
+
+export interface ResearchSummary {
+  naccid: string;
+  visit_date?: string | null;
+  phenotype?: string | null;
+  sex?: string | null;
+  age?: number | null;
+  cdr?: number | null;
+  cdrsb?: number | null;
+  mmse?: number | null;
+  moca?: number | null;
+  gds?: number | null;
+  apoe_genotype?: string | null;
+  apoe_e4_count?: number | null;
+  mri?: MRISummary | null;
+}
+
 export interface QueryRequest {
-  patient_id: string;
+  patient_id?: string;
   query: string;
 }
 
 export interface QueryResponse {
-  patient_id: string;
+  patient_id?: string;
   stage: ClinicalStage;
   response: string;
   citations: Citation[];
+  personalized?: boolean;
 }

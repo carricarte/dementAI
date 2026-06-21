@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { PatientRecord, ScreeningScores } from '../types'
+import type { PatientRecord, ResearchSummary, ScreeningScores } from '../types'
 
 const DEMENTIA_LABELS: Record<string, string> = {
   alzheimers:                    "Alzheimer's Disease",
@@ -62,7 +62,62 @@ function hasAnyScore(s: ScreeningScores) {
   return Object.values(s).some((v) => v != null)
 }
 
-export default function PatientProfile({ record }: { record: PatientRecord | null }) {
+function ResearchCard({ r }: { r: ResearchSummary }) {
+  const apoeColor = (r.apoe_e4_count ?? 0) >= 2
+    ? 'text-red-700 bg-red-50 border-red-200'
+    : (r.apoe_e4_count ?? 0) === 1
+      ? 'text-amber-700 bg-amber-50 border-amber-200'
+      : 'text-slate-600 bg-slate-50 border-slate-200'
+
+  return (
+    <div className="px-4 py-3 border-b border-slate-100 space-y-2">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <p className="text-sm font-semibold text-slate-800 leading-tight">
+            {r.age != null ? `${r.age}yo` : '—'} {r.sex ?? ''}
+          </p>
+          <p className="text-xs text-slate-500 mt-0.5 leading-snug">{r.phenotype ?? 'Unknown phenotype'}</p>
+        </div>
+        <span className="text-xs text-slate-400 shrink-0">{r.naccid}</span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-1.5">
+        {[
+          { label: 'CDR', value: r.cdr != null ? String(r.cdr) : null },
+          { label: 'MMSE', value: r.mmse != null ? `${r.mmse}/30` : null },
+          { label: 'MoCA', value: r.moca != null ? `${r.moca}/30` : null },
+        ].map(({ label, value }) => (
+          <div key={label} className="bg-slate-50 rounded px-2 py-1.5 text-center">
+            <p className="text-xs text-slate-400">{label}</p>
+            <p className="text-sm font-semibold text-slate-800">{value ?? '—'}</p>
+          </div>
+        ))}
+      </div>
+
+      {r.apoe_genotype && (
+        <span className={`inline-block text-xs font-medium border rounded-full px-2 py-0.5 ${apoeColor}`}>
+          APOE {r.apoe_genotype}
+        </span>
+      )}
+
+      {r.mri && (r.mri.mta_l != null || r.mri.wmh_cm3 != null) && (
+        <div className="text-xs text-slate-500 space-y-0.5">
+          {r.mri.mta_l != null && r.mri.mta_r != null && (
+            <p>MTA L/R: {r.mri.mta_l} / {r.mri.mta_r}</p>
+          )}
+          {r.mri.wmh_cm3 != null && (
+            <p>WMH: {r.mri.wmh_cm3.toFixed(2)} cm³</p>
+          )}
+          {r.mri.amyloid_status && (
+            <p>Amyloid: {r.mri.amyloid_status}</p>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function PatientProfile({ record, research }: { record: PatientRecord | null; research: ResearchSummary | null }) {
   return (
     <aside className="w-72 bg-white border-l border-slate-200 flex flex-col shrink-0">
       <div className="px-4 py-3 border-b border-slate-100">
@@ -72,10 +127,14 @@ export default function PatientProfile({ record }: { record: PatientRecord | nul
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {!record ? (
+        {!record && !research ? (
           <p className="px-4 py-8 text-sm text-slate-400 text-center">No record loaded</p>
         ) : (
           <>
+            {/* Research summary card */}
+            {research && <ResearchCard r={research} />}
+
+            {record && <>
             {/* Diagnosis */}
             <Section title="Diagnosis">
               {record.dementia_type ? (
@@ -165,6 +224,7 @@ export default function PatientProfile({ record }: { record: PatientRecord | nul
               {record.visits.length} visit{record.visits.length !== 1 ? 's' : ''} ·{' '}
               ID: {record.patient_id}
             </div>
+            </>}
           </>
         )}
       </div>

@@ -17,11 +17,18 @@ class Settings(BaseSettings):
     embed_model: str = "neuml/pubmedbert-base-embeddings"
     retrieval_top_k: int = 20
 
+    # Max chunks allowed from the same paper after reranking.
+    # Prevents the reranker from filling all top-k slots with chunks from one
+    # highly-relevant paper, which would produce very few unique references.
+    max_chunks_per_paper: int = 2
+
     # Search strategy: vector | fts | hybrid | hybrid_rerank
     # hybrid_rerank = hybrid (vector+FTS RRF) then cross-encoder rerank
     search_strategy: str = "hybrid_rerank"
-    # Cross-encoder model for reranking (sentence-transformers model ID)
-    rerank_model: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    # Cross-encoder model for reranking (sentence-transformers model ID).
+    # ncats/MedCPT-Cross-Encoder is trained on MEDLINE query-article pairs —
+    # significantly better than MS MARCO models for biomedical literature.
+    rerank_model: str = "ncats/MedCPT-Cross-Encoder"
 
 
 settings = Settings()

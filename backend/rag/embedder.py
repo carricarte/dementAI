@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import threading
+
 from backend.config import settings
 
 
@@ -24,13 +26,17 @@ class SentenceEmbedder:
 
 
 class _LazyEmbedder:
-    """Defers model download until the first embed call."""
+    """Defers model download until the first embed call; thread-safe initialisation."""
 
-    _inner: SentenceEmbedder | None = None
+    def __init__(self) -> None:
+        self._inner: SentenceEmbedder | None = None
+        self._lock = threading.Lock()
 
     def _get(self) -> SentenceEmbedder:
         if self._inner is None:
-            self._inner = SentenceEmbedder()
+            with self._lock:
+                if self._inner is None:  # double-checked locking
+                    self._inner = SentenceEmbedder()
         return self._inner
 
     def embed_query(self, text: str) -> list[float]:
@@ -38,6 +44,10 @@ class _LazyEmbedder:
 
     def embed_article(self, text: str) -> list[float]:
         return self._get().embed_article(text)
+
+    def warmup(self) -> None:
+        """Force model load at startup so the first real request never races."""
+        self._get()
 
 
 embedder = _LazyEmbedder()

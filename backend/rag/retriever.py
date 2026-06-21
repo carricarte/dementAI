@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from functools import lru_cache
 from typing import Literal
 
 import lancedb
@@ -14,23 +15,29 @@ TABLE_NAME = "knowledge"
 SearchStrategy = Literal["vector", "fts", "hybrid", "hybrid_rerank"]
 
 _EXPAND_PROMPT = """\
-You are a clinical information retrieval assistant.
+You are a biomedical information retrieval assistant.
 
-Given a clinical question or patient presentation, produce exactly 3 concise search queries \
-to retrieve relevant evidence from a biomedical literature database. Each query must:
-- Be 5–15 words using precise medical terminology
-- Target a distinct aspect: e.g. diagnostic criteria, differential workup, biomarkers, treatment
+Given a clinical question, produce exactly 3 search queries to retrieve relevant evidence \
+from a biomedical literature database. Each query must:
+- Preserve the original intent exactly — if the question asks about causes, all 3 queries \
+must be about causes; if about treatment, all 3 about treatment. Do NOT pivot to other \
+clinical aspects.
+- Use different but equivalent terminology: synonyms, MeSH terms, gene names, pathological \
+terms, abbreviations — to improve recall across different phrasings in the literature.
+- Be 5–15 words of precise medical terminology.
 
 Return only the 3 queries, one per line, no numbering or other text.
 
 Clinical question: {query}"""
 
 
+@lru_cache(maxsize=256)
 def _expand_query(query: str) -> list[str]:
     """Decompose a clinical narrative into 3 focused retrieval sub-queries via LLM."""
     from backend.llm import get_llm  # late import — model already loaded by caller
 
-    response = get_llm().invoke(_EXPAND_PROMPT.format(query=query))
+    llm = get_llm()
+    response = llm.invoke(_EXPAND_PROMPT.format(query=query))
     lines = [line.strip() for line in response.content.strip().splitlines() if line.strip()]
     return lines[:3]
 
@@ -100,11 +107,19 @@ class KnowledgeRetriever:
             candidates = self._vector(tbl, queries, source_filter, fetch_limit)
 
         if strat == "hybrid_rerank":
-            # Cross-encoder rerank candidate pool (up to k*2) against the
-            # original query — sub-queries expand recall, reranker refines.
-            candidates = _reranker.rerank(query, candidates[: k * 2], k, settings.rerank_model)
+            # Cross-encoder rerank a large candidate pool against the original
+            # query — sub-queries expand recall, reranker refines by intent.
+            candidates = _reranker.rerank(
+                query,
+                candidates[: k * 10],
+                k,
+                settings.rerank_model,
+            )
         else:
             candidates = candidates[:k]
+
+        def _clean(v: object) -> str | None:
+            return str(v) if v and str(v) not in ("None", "nan") else None
 
         # Assign each unique (source, title) a citation number in ranked order.
         cite_num: dict[tuple[str, str], int] = {}
@@ -118,8 +133,8 @@ class KnowledgeRetriever:
                     Citation(
                         source=row["source"],
                         title=row["title"],
-                        url=row.get("url") or None,
-                        pmid=row.get("pmid") or None,
+                        url=_clean(row.get("url")),
+                        pmid=_clean(row.get("pmid")),
                     )
                 )
 

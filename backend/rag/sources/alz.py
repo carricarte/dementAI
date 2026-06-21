@@ -43,6 +43,50 @@ ALZ_PDFS: list[dict] = [
         "title": "Lecanemab Appropriate Use Recommendations and Clinical Toolkit",
         "year": 2023,
     },
+    # ── Screening tool PDFs ──────────────────────────────────────────────────
+    {
+        "url": "https://www.alz.org/getmedia/7c51d895-9df8-4819-8ea3-b896ff9a9deb/mini-cog.pdf",
+        "filename": "mini-cog.pdf",
+        "source_id": "mini-cog",
+        "title": "Mini-Cog: A 3-minute cognitive screen for dementia",
+        "year": 2023,
+    },
+    {
+        "url": "https://www.alz.org/getmedia/a195e9f7-5dea-407a-83a9-2bc80e4c4796/gpcog-screening-test-english.pdf",
+        "filename": "gpcog-screening-test-english.pdf",
+        "source_id": "gpcog",
+        "title": "GPCOG: General Practitioner Assessment of Cognition",
+        "year": 2023,
+    },
+    {
+        "url": "https://www.alz.org/getmedia/2cc07bd9-1299-42c3-ac54-a61388ee4ef1/memory-impairment-screening-mis.pdf",
+        "filename": "memory-impairment-screening-mis.pdf",
+        "source_id": "mis",
+        "title": "Memory Impairment Screen (MIS)",
+        "year": 2023,
+    },
+    {
+        "url": "https://www.alz.org/getmedia/6e7291bf-4ac8-40ed-a148-824d4591ed7e/ad8-dementia-screening.pdf",
+        "filename": "ad8-dementia-screening.pdf",
+        "source_id": "ad8",
+        "title": "AD8: Eight-Item Informant Interview to Differentiate Aging and Dementia",
+        "year": 2023,
+    },
+    {
+        "url": "https://www.alz.org/getmedia/77436b38-a073-4eca-8298-46552ab94c17/short-form-informant-questionnaire-decline.pdf",
+        "filename": "short-form-informant-questionnaire-decline.pdf",
+        "source_id": "iqcode-sf",
+        "title": "Short-Form Informant Questionnaire on Cognitive Decline in the Elderly (IQCODE)",
+        "year": 2023,
+    },
+    # ── Epidemiology and care statistics ────────────────────────────────────
+    {
+        "url": "https://www.alz.org/getmedia/a6b0adee-d708-43a0-b78d-44bdd9234b60/alzheimers-facts-and-figures-special-report-2025.pdf",
+        "filename": "alzheimers-facts-and-figures-special-report-2025.pdf",
+        "source_id": "alz-facts-figures-2025-sr",
+        "title": "2025 Alzheimer's Disease Facts and Figures Special Report",
+        "year": 2025,
+    },
 ]
 
 

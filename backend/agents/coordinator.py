@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from typing import Iterator
 
 from langgraph.graph import END, StateGraph
@@ -9,7 +10,7 @@ from backend.agents.analyzer import run_analyzer_agent
 from backend.audit.logger import audit_logger
 from backend.llm import get_llm
 from backend.prompts import load
-from backend.state.schema import ClinicalStage, GraphState, PatientRecord, VisitRecord
+from backend.state.schema import Citation, ClinicalStage, GraphState, PatientRecord, VisitRecord
 from backend.state.store import patient_store
 
 from . import care as _care
@@ -25,19 +26,60 @@ from .treatment import run_treatment
 
 _CLASSIFY_PROMPT = load("coordinator_classify")
 
+_OFF_TOPIC_RESPONSE = (
+    "## Outside Scope\n"
+    "This system answers questions about dementia, cognitive decline, and neurodegeneration only. "
+    "Please consult a general clinical reference for this query."
+)
+
+
+def _renumber_citations(response: str, citations: list[Citation]) -> tuple[str, list[Citation]]:
+    """Renumber [N] markers so they follow order of first appearance in the text."""
+    order: list[int] = []
+    seen: set[int] = set()
+    for m in re.finditer(r"\[(\d+)\]", response):
+        n = int(m.group(1))
+        if n not in seen and 1 <= n <= len(citations):
+            seen.add(n)
+            order.append(n)
+    remap = {old: new for new, old in enumerate(order, 1)}
+    new_response = re.sub(
+        r"\[(\d+)\]", lambda m: f"[{remap.get(int(m.group(1)), m.group(1))}]", response
+    )
+    new_citations = [citations[n - 1] for n in order]
+    return new_response, new_citations
+
+
 # ---------------------------------------------------------------------------
 # Shared graph nodes
 # ---------------------------------------------------------------------------
 
 
+def refuse_off_topic(state: GraphState) -> GraphState:
+    return {
+        **state,
+        "stage": ClinicalStage.SCREENING,  # sentinel for audit log
+        "specialist_response": _OFF_TOPIC_RESPONSE,
+        "citations": [],
+        "final_response": _OFF_TOPIC_RESPONSE,
+    }
+
+
 def classify_stage(state: GraphState) -> GraphState:
+    """Classify query into a clinical stage, or mark off_topic if out of scope."""
     response = get_llm().invoke(_CLASSIFY_PROMPT.format(query=state["query"]))
     raw = response.content.strip().lower().split()[0]
+    if raw == "off_topic":
+        return {**state, "is_on_topic": False, "stage": None}
     try:
         stage = ClinicalStage(raw)
     except ValueError:
         stage = ClinicalStage.SCREENING
-    return {**state, "stage": stage}
+    return {**state, "is_on_topic": True, "stage": stage}
+
+
+def route_after_classify(state: GraphState) -> str:
+    return "classify_intent" if state.get("is_on_topic", True) else "refuse_off_topic"
 
 
 def classify_intent(state: GraphState) -> GraphState:
@@ -64,7 +106,15 @@ def route_to_specialist(state: GraphState) -> str:
 
 
 def merge_output(state: GraphState) -> GraphState:
-    return {**state, "final_response": state["specialist_response"]}
+    response, citations = _renumber_citations(
+        state["specialist_response"] or "", state["citations"]
+    )
+    return {
+        **state,
+        "specialist_response": response,
+        "citations": citations,
+        "final_response": response,
+    }
 
 
 def save_state(state: GraphState) -> GraphState:
@@ -124,11 +174,13 @@ def _stream_response(state: GraphState, personalized: bool) -> Iterator[str]:
         yield _sse({"type": "error", "message": str(exc)})
         return
 
+    renumbered_response, renumbered_citations = _renumber_citations(full_response, citations)
+
     state = {
         **state,
-        "specialist_response": full_response,
-        "citations": citations,
-        "final_response": full_response,
+        "specialist_response": renumbered_response,
+        "citations": renumbered_citations,
+        "final_response": renumbered_response,
     }
     try:
         save_state(state)
@@ -139,7 +191,8 @@ def _stream_response(state: GraphState, personalized: bool) -> Iterator[str]:
     yield _sse(
         {
             "type": "done",
-            "citations": [c.model_dump() for c in citations],
+            "response": renumbered_response,
+            "citations": [c.model_dump() for c in renumbered_citations],
             "personalized": personalized,
         }
     )
@@ -155,6 +208,7 @@ def stream_query(patient_id: str, query: str) -> Iterator[str]:
     state: GraphState = {
         "patient_id": patient_id,
         "query": query,
+        "is_on_topic": True,
         "stage": None,
         "query_intent": None,
         "patient_record": None,
@@ -169,6 +223,19 @@ def stream_query(patient_id: str, query: str) -> Iterator[str]:
     except Exception as exc:
         yield _sse({"type": "error", "message": str(exc)})
         return
+
+    if not state.get("is_on_topic", True):
+        yield _sse({"type": "stage", "stage": "off_topic"})
+        yield _sse(
+            {
+                "type": "done",
+                "response": _OFF_TOPIC_RESPONSE,
+                "citations": [],
+                "personalized": False,
+            }
+        )
+        return
+
     yield _sse({"type": "stage", "stage": state["stage"].value})
 
     state = classify_intent(state)
@@ -199,6 +266,7 @@ def build_graph():
 
     g.add_node("classify_stage", classify_stage)
     g.add_node("classify_intent", classify_intent)
+    g.add_node("refuse_off_topic", refuse_off_topic)
 
     # Both paths share load_patient → specialist routing
     g.add_node("load_patient", load_patient)
@@ -216,7 +284,13 @@ def build_graph():
     g.add_node("audit_log", audit_log)
 
     g.set_entry_point("classify_stage")
-    g.add_edge("classify_stage", "classify_intent")
+    g.add_conditional_edges(
+        "classify_stage",
+        route_after_classify,
+        {"classify_intent": "classify_intent", "refuse_off_topic": "refuse_off_topic"},
+    )
+    # Off-topic path skips specialist and merge; goes straight to audit
+    g.add_edge("refuse_off_topic", "audit_log")
     g.add_conditional_edges(
         "classify_intent",
         route_pipeline,

@@ -46,12 +46,36 @@ class Citation(BaseModel):
     pmid: str | None = None
 
 
+class PatientStatusReport(BaseModel):
+    """Structured clinical summary produced by the Analyzer Agent.
+
+    Populated only when the Coordinator determines the query requires
+    patient-specific context; never written into the knowledge base.
+    """
+
+    patient_id: str
+    primary_diagnosis: str | None = None
+    diagnosis_stage: str | None = None  # "normal"|"MCI"|"mild"|"moderate"|"severe"
+    mmse: int | None = None
+    moca: int | None = None
+    cdr: float | None = None
+    apoe_status: str | None = None
+    risk_factors: list[str] = Field(default_factory=list)
+    current_medications: list[str] = Field(default_factory=list)
+    completed_workups: list[str] = Field(default_factory=list)
+    pending_workups: list[str] = Field(default_factory=list)
+    mri_findings: str | None = None
+    clinical_summary: str = ""
+    key_findings: list[str] = Field(default_factory=list)
+    treatment_priorities: list[str] = Field(default_factory=list)
+
+
 class ScreeningScores(BaseModel):
-    mmse: int | None = None       # 0–30
-    moca: int | None = None       # 0–30
-    cdr: float | None = None      # 0, 0.5, 1, 2, 3
-    adas_cog: float | None = None # 0–70
-    gds: int | None = None        # Geriatric Depression Scale short form 0–15
+    mmse: int | None = None  # 0–30
+    moca: int | None = None  # 0–30
+    cdr: float | None = None  # 0, 0.5, 1, 2, 3
+    adas_cog: float | None = None  # 0–70
+    gds: int | None = None  # Geriatric Depression Scale short form 0–15
 
 
 class VisitRecord(BaseModel):
@@ -83,10 +107,15 @@ class PatientRecord(BaseModel):
 
 # Flows through the LangGraph coordinator for one interaction
 class GraphState(TypedDict):
-    patient_id: str
+    patient_id: str | None
     query: str
+    is_on_topic: bool  # False → short-circuit to refuse_off_topic before specialist routing
     stage: ClinicalStage | None
+    # "general": answer via KB + specialist only (no patient data in prompt)
+    # "patient_specific": Analyzer → synthesis path
+    query_intent: str | None
     patient_record: PatientRecord | None
+    patient_status_report: PatientStatusReport | None
     specialist_response: str | None
     citations: list[Citation]
     final_response: str | None
