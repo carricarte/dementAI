@@ -6,14 +6,24 @@ const STYLES: Record<ClinicalStage, string> = {
   prevention: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   treatment:  'bg-amber-100  text-amber-800  border-amber-200',
   care:       'bg-teal-100   text-teal-800   border-teal-200',
+  off_topic:  'bg-slate-100  text-slate-500  border-slate-200',
+}
+
+const LABELS: Record<ClinicalStage, string> = {
+  screening:  'Screening',
+  diagnosis:  'Diagnosis',
+  prevention: 'Prevention',
+  treatment:  'Treatment',
+  care:       'Care',
+  off_topic:  'Outside Scope',
 }
 
 export default function StageBadge({ stage }: { stage: ClinicalStage }) {
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize ${STYLES[stage]}`}
+      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${STYLES[stage]}`}
     >
-      {stage}
+      {LABELS[stage]}
     </span>
   )
 }

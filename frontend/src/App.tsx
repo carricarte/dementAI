@@ -78,6 +78,7 @@ export default function App() {
           )
         },
         (citations, personalized, renumberedResponse) => {
+          setIsLoading(false)
           setIsStreaming(false)
           setQueryIntent(null)
           setResponse(prev => prev ? {

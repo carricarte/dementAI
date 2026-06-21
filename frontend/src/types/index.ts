@@ -1,4 +1,4 @@
-export type ClinicalStage = 'screening' | 'diagnosis' | 'prevention' | 'treatment' | 'care';
+export type ClinicalStage = 'screening' | 'diagnosis' | 'prevention' | 'treatment' | 'care' | 'off_topic';
 
 export interface Citation {
   source: string;
